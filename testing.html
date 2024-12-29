@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="./laaWebComponentLibrary.js"></script>
+</head>
+
+<body class="grid gap-8 p-2">
+  <laa-example>
+    ciao
+    <div>sono uno slot {a}</div>
+    <p>{n}</p>
+  </laa-example>
+
+  <hello-world></hello-world>
+
+  <template id="hello-world">
+    hello {q}
+    <script>
+      let q = 50;
+      thisComponent.addEventListener("click", () => {
+        q = q+1;
+      });
+    </script>
+  </template>
+
+  <template id="laa-example" class="outline">
+    il valore di n è: {n}! e lo slot è: <slot></slot>
+
+    <div>
+      {n}
+      <p>hello {aaaa}
+      <div>{n}</div>
+      <main>
+        <div>
+          <p>
+          <div>{a}</div>
+          </p>
+        </div>
+      </main>
+      </p>
+    </div>
+
+    <script>
+      let n = 10;
+    </script>
+    <script>
+      let a = 5;
+      a = 7;
+      let aaaa = "ciao"
+    </script>
+    <script>
+      let b = 0;
+    </script>
+    <script>
+      let c = 0;
+    </script>
+  </template>
+</body>
+
+</html>
