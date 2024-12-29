@@ -171,8 +171,6 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       component: this.querySelectorAll("script"),
     };
 
-    console.log(allScriptElementsInside)
-
     const generatedScriptElementInsideComponent =
       document.createElement("script");
 
@@ -206,7 +204,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     const STATE_OBJECT_POSITION_PREFIX_STRING = "thisComponent.stateVariables.";
 
     const allVariableDefinitionInfo = [
-      ...scriptTextContentString.matchAll(/(let|const|var)(.[^=]*)=/g),
+      ...scriptTextContentString.matchAll(/(let|const)(.[^=]*)=/g),
     ].map((thisMatch) => {
       return {
         variableDefinitionType: thisMatch[1],
@@ -227,7 +225,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
             `${STATE_OBJECT_POSITION_PREFIX_STRING}${curr.variableName}`,
           );
         }, scriptTextContentString)
-        .replaceAll(/let|const|var/g, "");
+        .replaceAll(/let|const/g, "");
 
     return allVariableDefinitionInfoWithPositionReplaced;
   }
