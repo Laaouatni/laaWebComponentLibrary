@@ -196,38 +196,29 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
   ) {
     const STATE_OBJECT_POSITION_PREFIX_STRING = "thisComponent.stateVariables.";
 
-    const allVariableDefinitionInfo = [...scriptTextContentString.matchAll(/(let|const|var)(.*)=/g)].map(
-      (thisMatch) => {
-        return {
-          variableDefinitionType: thisMatch[1],
-          variableName: thisMatch[2].trim(),
-        };
-      },
-    );
+    const allVariableDefinitionInfo = [
+      ...scriptTextContentString.matchAll(/(let|const|var)(.*)=/g),
+    ].map((thisMatch) => {
+      return {
+        variableDefinitionType: thisMatch[1],
+        variableName: thisMatch[2].trim(),
+      };
+    });
 
-    console.log(allVariableDefinitionInfo);
+    const allVariableDefinitionInfoWithPositionReplaced =
+      allVariableDefinitionInfo.map((thisVariableDefinitionInfo) => {
+        const regexVariablePositions = new RegExp(
+          `(?<!\\w)(${thisVariableDefinitionInfo.variableName})(?!\\w)`,
+          "g",
+        );
 
-    return scriptTextContentString;
-    // const replaceVariableSettingWithPrefix = scriptTextContentString.replaceAll(
-    //   /.*=/g,
-    //   (thisString) => {
-    //     const regexs = {
-    //       variableDefinitionTypes: /let |const |var /g,
-    //       anonymousCallbackVoid: /\(.*\).*=/g,
-    //     };
-    //     const isCallback = thisString.match(regexs.anonymousCallbackVoid);
-    //     const isDefinition = thisString.match(regexs.variableDefinitionTypes);
+        return scriptTextContentString.replaceAll(
+          regexVariablePositions,
+          `${STATE_OBJECT_POSITION_PREFIX_STRING}$1`,
+        );
+      }).join("").replaceAll(/let|const|var/g, "")
 
-    //     if (isCallback) return thisString;
-    //     if (isDefinition)
-    //       return thisString.replace(
-    //         regexs.variableDefinitionTypes,
-    //         STATE_OBJECT_POSITION_PREFIX_STRING,
-    //       );
-    //     return `${STATE_OBJECT_POSITION_PREFIX_STRING}${thisString}`;
-    //   },
-    // );
-    // return replaceVariableSettingWithPrefix.replaceAll(" ", "");
+    return allVariableDefinitionInfoWithPositionReplaced;
   }
   /**
    * @param   {string} thisScriptString
