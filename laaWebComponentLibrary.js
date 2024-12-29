@@ -216,7 +216,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
           regexVariablePositions,
           `${STATE_OBJECT_POSITION_PREFIX_STRING}$1`,
         );
-      }).join("").replaceAll(/let|const|var/g, "")
+      }).join("").replaceAll(/let|const|var/g, "");
 
     return allVariableDefinitionInfoWithPositionReplaced;
   }
