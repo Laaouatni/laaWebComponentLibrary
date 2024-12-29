@@ -17,8 +17,10 @@
     <script>
       let a = 0;
       performance.mark('start');
-      for (var i = 0; i < 100; i++) {
-        a++;
+      for (var i = 0; i < 100000; i++) {
+        setTimeout(() => {
+          a++;
+        }, 0)
       }
       performance.mark('end');
       performance.measure('start to end', 'start', 'end');
