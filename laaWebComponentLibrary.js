@@ -175,7 +175,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     const mergedScriptTags = [...allScriptElementsInsideTemplate]
       .map((thisScriptTemplateElement) => {
         if (!thisScriptTemplateElement.textContent) return "";
-        
+
         return addSyntacticSugarVariableDeclarationsToScriptTextContent(
           thisScriptTemplateElement.textContent,
         );
@@ -198,7 +198,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     const STATE_OBJECT_POSITION_PREFIX_STRING = "thisComponent.stateVariables.";
 
     const allVariableDefinitionInfo = [
-      ...scriptTextContentString.matchAll(/(let|const|var)(.*)=/g),
+      ...scriptTextContentString.matchAll(/(let|const|var)(.[^=]*)=/g),
     ].map((thisMatch) => {
       return {
         variableDefinitionType: thisMatch[1],
