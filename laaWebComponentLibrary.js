@@ -166,24 +166,32 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
   }
 
   function copyScriptsFromTemplateToComponent() {
-    const allScriptElementsInsideTemplate =
-      thisTemplateElement.content.querySelectorAll("script");
+    const allScriptElementsInside = {
+      template: thisTemplateElement.content.querySelectorAll("script"),
+      component: this.querySelectorAll("script"),
+    };
+
+    console.log(allScriptElementsInside)
 
     const generatedScriptElementInsideComponent =
       document.createElement("script");
 
-    const mergedScriptTags = [...allScriptElementsInsideTemplate]
+    const mergedScriptTags = [
+      ...allScriptElementsInside.template,
+      ...allScriptElementsInside.component,
+    ]
       .map((thisScriptTemplateElement) => {
         if (!thisScriptTemplateElement.textContent) return "";
-
-        return addSyntacticSugarVariableDeclarationsToScriptTextContent(
-          thisScriptTemplateElement.textContent,
-        );
+        return thisScriptTemplateElement.textContent;
       })
       .join("");
+    
+    const syntacticSugarVariablesAddedToScriptString = addSyntacticSugarVariableDeclarationsToScriptTextContent(
+      mergedScriptTags
+    );
 
     generatedScriptElementInsideComponent.textContent =
-      isolateScriptStringInsideComponent(mergedScriptTags).replaceAll("  ", "");
+      isolateScriptStringInsideComponent(syntacticSugarVariablesAddedToScriptString).replaceAll("  ", "");
 
     this.appendChild(generatedScriptElementInsideComponent);
   }
