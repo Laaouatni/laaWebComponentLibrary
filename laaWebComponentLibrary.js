@@ -195,16 +195,19 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     scriptTextContentString,
   ) {
     const STATE_OBJECT_POSITION_PREFIX_STRING = "thisComponent.stateVariables.";
-    const allVariableInitiliazationsMatchedStrings = [...scriptTextContentString.matchAll(/(let|const|var)(.*)=/g)];
-    allVariableInitiliazationsMatchedStrings.forEach((thisMatch) => {
-      const variableData = {
-        variableDefinitionType: thisMatch[1],
-        variableName: thisMatch[2].trim(),
-      }
-      console.log(variableData.variableName);
-    });
 
-    return scriptTextContentString
+    const allVariableDefinitionInfo = [...scriptTextContentString.matchAll(/(let|const|var)(.*)=/g)].map(
+      (thisMatch) => {
+        return {
+          variableDefinitionType: thisMatch[1],
+          variableName: thisMatch[2].trim(),
+        };
+      },
+    );
+
+    console.log(allVariableDefinitionInfo);
+
+    return scriptTextContentString;
     // const replaceVariableSettingWithPrefix = scriptTextContentString.replaceAll(
     //   /.*=/g,
     //   (thisString) => {
