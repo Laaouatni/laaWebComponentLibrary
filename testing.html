@@ -10,22 +10,27 @@
 </head>
 
 <body class="grid gap-8 p-2">
-  <laa-example></laa-example>
+  <laa-example class="{thisComponent.stateVariables.a>3?'outline':'outline-none'}"></laa-example>
+  <!-- <laa-idk></laa-idk>
 
-  <template id="laa-example">
+  <template id="laa-idk">
+    idk {a}
+
+    <script>
+      let a = 0;
+      thisComponent.addEventListener("click", () => {
+        a++;
+      });
+    </script>
+  </template> -->
+
+  <template id="laa-example" class="{thisComponent.stateVariables.a%2?'bg-green-500':'bg-red-500'} text-3xl">
     hello world {a}
     <script>
       let a = 0;
-      performance.mark('start');
-      for (var i = 0; i < 100000; i++) {
-        setTimeout(() => {
-          a++;
-        }, 0)
-      }
-      performance.mark('end');
-      performance.measure('start to end', 'start', 'end');
-      var measure = performance.getEntriesByName('start to end')[0]
-      console.log(measure.duration);
+      thisComponent.addEventListener("click", () => {
+        a++;
+      });
     </script>
   </template>
 </body>

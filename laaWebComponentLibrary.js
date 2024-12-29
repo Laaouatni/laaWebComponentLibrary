@@ -12,6 +12,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
      * @type {{[variableName:string]: any}}
      */
     stateVariables = {};
+    initialClassList;
     constructor() {
       super();
     }
@@ -41,11 +42,12 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
 
       copyFromTemplateToComponent.templateContent();
       copyFromTemplateToComponent.attributes(["class", "style"]);
-
+      
       this.stateVariables = new Proxy(this.stateVariables, {
         set: (parent, child, val) => {
           parent[child] = val;
           updateComponentInnerHtmlVariables(this);
+          updateClassAttribute(this);
           return true;
         },
       });
@@ -75,6 +77,33 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
   }
 
   customElements.define(thisTemplateElement.id, ThisComponent);
+
+  /**
+   * 
+   * @param {ThisComponent} thisComponent 
+   */
+  function updateClassAttribute(thisComponent) {
+    let updateClassListString = "";
+
+    thisComponent.classList.forEach((thisClass) => {
+      const isDynamicClass = thisClass.startsWith("{") && thisClass.endsWith("}");
+      if (!isDynamicClass) {
+        updateClassListString += `${thisClass} `;
+        return;
+      };
+      const splittedClass = thisClass.split(/\?|:/g);
+      const thisClassData = {
+        condition: splittedClass[0].replace("{", "").replace("}", ""),
+        trueClass: splittedClass[1].replaceAll("'", ""),
+        falseClass: splittedClass[2].replaceAll("'", "")
+      }
+
+      if(eval(thisClassData.condition)) {
+        updateClassListString += `${thisClassData.trueClass} `;
+      }
+    });
+    console.log(updateClassListString);
+  }
 
   /**
    *
