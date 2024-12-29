@@ -175,6 +175,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     const mergedScriptTags = [...allScriptElementsInsideTemplate]
       .map((thisScriptTemplateElement) => {
         if (!thisScriptTemplateElement.textContent) return "";
+        
         return addSyntacticSugarVariableDeclarationsToScriptTextContent(
           thisScriptTemplateElement.textContent,
         );
@@ -205,18 +206,17 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       };
     });
 
-    const allVariableDefinitionInfoWithPositionReplaced =
-      allVariableDefinitionInfo.map((thisVariableDefinitionInfo) => {
-        const regexVariablePositions = new RegExp(
-          `(?<!\\w)(${thisVariableDefinitionInfo.variableName})(?!\\w)`,
-          "g",
-        );
+    const allVariableDefinitionInfoWithPositionReplaced = allVariableDefinitionInfo.reduce((prev, curr, index) => {
+      const regexVariablePositions = new RegExp(
+        `(?<!\\w)(${curr.variableName})(?!\\w)`,
+        "g",
+      );
 
-        return scriptTextContentString.replaceAll(
-          regexVariablePositions,
-          `${STATE_OBJECT_POSITION_PREFIX_STRING}$1`,
-        );
-      }).join("").replaceAll(/let|const|var/g, "");
+      return prev.replaceAll(
+        regexVariablePositions,
+        `${STATE_OBJECT_POSITION_PREFIX_STRING}${curr.variableName}`
+      )
+    }, scriptTextContentString).replaceAll(/let|const|var/g, "");
 
     return allVariableDefinitionInfoWithPositionReplaced;
   }

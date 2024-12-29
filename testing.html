@@ -17,17 +17,26 @@
   </laa-example>
 
   <hello-world></hello-world>
+  <hello-world></hello-world>
 
   <template id="hello-world">
     hello {q} e anche {i}
     <script>
       let q = 50;
-      const i= 10 + q;
+      const i = 10 + q;
       thisComponent.addEventListener("click", () => {
         q = q+1;
       });
     </script>
   </template>
+
+  <!-- <script>
+    thisComponent.stateVariables.q = 50;
+    thisComponent.stateVariables.i = 10 + thisComponent.stateVariables.q;
+    thisComponent.addEventListener("click", () => {
+      thisComponent.stateVariables.q = thisComponent.stateVariables.q + 1;
+    });
+  </script> -->
 
   <template id="laa-example" class="outline">
     il valore di n è: {n}! e lo slot è: <slot></slot>
