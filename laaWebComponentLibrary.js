@@ -206,17 +206,20 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       };
     });
 
-    const allVariableDefinitionInfoWithPositionReplaced = allVariableDefinitionInfo.reduce((prev, curr, index) => {
-      const regexVariablePositions = new RegExp(
-        `(?<!\\w)(${curr.variableName})(?!\\w)`,
-        "g",
-      );
+    const allVariableDefinitionInfoWithPositionReplaced =
+      allVariableDefinitionInfo
+        .reduce((prev, curr, index) => {
+          const regexVariablePositions = new RegExp(
+            `(?<!\\w)(${curr.variableName})(?!\\w)`,
+            "g",
+          );
 
-      return prev.replaceAll(
-        regexVariablePositions,
-        `${STATE_OBJECT_POSITION_PREFIX_STRING}${curr.variableName}`
-      )
-    }, scriptTextContentString).replaceAll(/let|const|var/g, "");
+          return prev.replaceAll(
+            regexVariablePositions,
+            `${STATE_OBJECT_POSITION_PREFIX_STRING}${curr.variableName}`,
+          );
+        }, scriptTextContentString)
+        .replaceAll(/let|const|var/g, "");
 
     return allVariableDefinitionInfoWithPositionReplaced;
   }
