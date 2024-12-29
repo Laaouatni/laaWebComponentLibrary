@@ -1,6 +1,6 @@
 /* created by Laaouatni - https://github.com/Laaouatni/ */
-
 document.querySelectorAll("template").forEach((thisTemplateElement) => {
+  const STATE_OBJECT_POSITION_PREFIX_STRING = "thisComponent.stateVariables.";
   class ThisComponent extends HTMLElement {
     /**
      * @type {ShadowRoot}
@@ -99,10 +99,12 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       };
       const splittedClass = thisClass.split(/\?|:/g);
       const thisClassData = {
-        condition: splittedClass[0].replace("{", "").replace("}", ""),
+        condition: `${STATE_OBJECT_POSITION_PREFIX_STRING}${splittedClass[0].replace("{", "").replace("}", "")}`,
         trueClass: splittedClass[1].replaceAll("'", ""),
         falseClass: splittedClass[2].replaceAll("'", "")
       }
+
+      console.log(thisClassData.condition);
 
       if(eval(thisClassData.condition)) {
         updateClassListString += `${thisClassData.trueClass} `;
@@ -238,8 +240,6 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
   function addSyntacticSugarVariableDeclarationsToScriptTextContent(
     scriptTextContentString,
   ) {
-    const STATE_OBJECT_POSITION_PREFIX_STRING = "thisComponent.stateVariables.";
-
     const allVariableDefinitionInfo = [
       ...scriptTextContentString.matchAll(/(let|const)(.[^=]*)=/g),
     ].map((thisMatch) => {

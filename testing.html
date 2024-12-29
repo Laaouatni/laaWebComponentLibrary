@@ -10,7 +10,7 @@
 </head>
 
 <body class="grid gap-8 p-2">
-  <laa-example class="{thisComponent.stateVariables.a>3?'outline':'outline-none'}"></laa-example>
+  <laa-example class="{a>3?'outline':'outline-none'}"></laa-example>
   <!-- <laa-idk></laa-idk>
 
   <template id="laa-idk">
@@ -24,7 +24,7 @@
     </script>
   </template> -->
 
-  <template id="laa-example" class="{thisComponent.stateVariables.a%2?'bg-green-500':'bg-red-500'} text-3xl">
+  <template id="laa-example" class="{a%2?'bg-green-500':'bg-red-500'} text-3xl">
     hello world {a}
     <script>
       let a = 0;
