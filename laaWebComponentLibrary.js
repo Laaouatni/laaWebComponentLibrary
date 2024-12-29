@@ -12,6 +12,11 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
      * @type {{[variableName:string]: any}}
      */
     stateVariables = {};
+    
+    /**
+     *
+     * @type {DOMTokenList | string[]} initialClassList
+     */
     initialClassList;
     constructor() {
       super();
@@ -42,7 +47,8 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
 
       copyFromTemplateToComponent.templateContent();
       copyFromTemplateToComponent.attributes(["class", "style"]);
-      
+      this.initialClassList = [...this.classList];
+      console.log("CONNECTED", this.initialClassList);
       this.stateVariables = new Proxy(this.stateVariables, {
         set: (parent, child, val) => {
           parent[child] = val;
@@ -85,7 +91,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
   function updateClassAttribute(thisComponent) {
     let updateClassListString = "";
 
-    thisComponent.classList.forEach((thisClass) => {
+    thisComponent.initialClassList.forEach((thisClass) => {
       const isDynamicClass = thisClass.startsWith("{") && thisClass.endsWith("}");
       if (!isDynamicClass) {
         updateClassListString += `${thisClass} `;
@@ -102,7 +108,9 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
         updateClassListString += `${thisClassData.trueClass} `;
       }
     });
+
     console.log(updateClassListString);
+    thisComponent.setAttribute("class", updateClassListString);
   }
 
   /**
