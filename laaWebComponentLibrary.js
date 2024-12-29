@@ -12,7 +12,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
      * @type {{[variableName:string]: any}}
      */
     stateVariables = {};
-    
+
     /**
      *
      * @type {DOMTokenList | string[]} initialClassList
@@ -85,34 +85,49 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
   customElements.define(thisTemplateElement.id, ThisComponent);
 
   /**
-   * 
-   * @param {ThisComponent} thisComponent 
+   *
+   * @param {ThisComponent} thisComponent
    */
   function updateClassAttribute(thisComponent) {
     let updateClassListString = "";
 
     thisComponent.initialClassList.forEach((thisClass) => {
-      const isDynamicClass = thisClass.startsWith("{") && thisClass.endsWith("}");
+      const isDynamicClass =
+        thisClass.startsWith("{") && thisClass.endsWith("}");
       if (!isDynamicClass) {
         updateClassListString += `${thisClass} `;
         return;
-      };
+      }
       const splittedClass = thisClass.split(/\?|:/g);
       const thisClassData = {
-        condition: `${STATE_OBJECT_POSITION_PREFIX_STRING}${splittedClass[0].replace("{", "").replace("}", "")}`,
+        condition: addSyntacticSugarClassConditions(splittedClass[0], thisComponent),
         trueClass: splittedClass[1].replaceAll("'", ""),
-        falseClass: splittedClass[2].replaceAll("'", "")
-      }
+        falseClass: splittedClass[2].replaceAll("'", ""),
+      };
 
       console.log(thisClassData.condition);
 
-      if(eval(thisClassData.condition)) {
-        updateClassListString += `${thisClassData.trueClass} `;
-      }
+      // if (eval(thisClassData.condition)) {
+      //   updateClassListString += `${thisClassData.trueClass} `;
+      // }
     });
 
-    console.log(updateClassListString);
-    thisComponent.setAttribute("class", updateClassListString);
+    // console.log(thisComponent.stateVariables);
+    // thisComponent.setAttribute("class", updateClassListString.trim());
+  }
+
+  /**
+   *
+   * @param {string} conditionString
+   * @param {ThisComponent} thisComponent
+   * @returns {string}
+   */
+  function addSyntacticSugarClassConditions(conditionString, thisComponent) {
+    let result = conditionString.replace("{", "");
+    Object.keys(thisComponent.stateVariables).forEach((thisVariable) => {
+      console.log(thisVariable);
+    });
+    return result;
   }
 
   /**
@@ -222,13 +237,16 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
         return thisScriptTemplateElement.textContent;
       })
       .join("");
-    
-    const syntacticSugarVariablesAddedToScriptString = addSyntacticSugarVariableDeclarationsToScriptTextContent(
-      mergedScriptTags
-    );
+
+    const syntacticSugarVariablesAddedToScriptString =
+      addSyntacticSugarVariableDeclarationsToScriptTextContent(
+        mergedScriptTags,
+      );
 
     generatedScriptElementInsideComponent.textContent =
-      isolateScriptStringInsideComponent(syntacticSugarVariablesAddedToScriptString).replaceAll("  ", "");
+      isolateScriptStringInsideComponent(
+        syntacticSugarVariablesAddedToScriptString,
+      ).replaceAll("  ", "");
 
     this.appendChild(generatedScriptElementInsideComponent);
   }
