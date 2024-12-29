@@ -1,6 +1,6 @@
 # laaWebComponentLibrary
 
-# rewriting this in progress here https://github.com/Laaouatni/arduino-2024-2025-prove/tree/main/2025/svelteRecreation
+# ⚠️ rewriting this in progress here https://github.com/Laaouatni/arduino-2024-2025-prove/tree/main/2025/svelteRecreation
 
 simple, easy, efficient way to create web components like a framework without bundlers/npm/node complexity
 
