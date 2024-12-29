@@ -19,9 +19,10 @@
   <hello-world></hello-world>
 
   <template id="hello-world">
-    hello {q}
+    hello {q} e anche {i}
     <script>
       let q = 50;
+      const i= 10 + q;
       thisComponent.addEventListener("click", () => {
         q = q+1;
       });
