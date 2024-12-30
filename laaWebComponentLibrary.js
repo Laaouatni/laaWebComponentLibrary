@@ -108,13 +108,14 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
         falseClass: splittedClass[2].replaceAll("'", ""),
       };
 
-      // if (eval(thisClassData.condition)) {
-      //   updateClassListString += `${thisClassData.trueClass} `;
-      // }
+      try {
+        if (eval(thisClassData.condition)) {
+          updateClassListString += `${thisClassData.trueClass} `;
+        }
+      } catch (e) {/*skip*/ };
     });
 
-    // console.log(thisComponent.stateVariables);
-    // thisComponent.setAttribute("class", updateClassListString.trim());
+    thisComponent.setAttribute("class", updateClassListString.trim());
   }
 
   /**
@@ -131,8 +132,8 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
         "g",
       );
       result = result.replaceAll(regexVariable, `${STATE_OBJECT_POSITION_PREFIX_STRING}${thisVariableName}`);
-      console.log(thisVariableName, result);
     });
+    console.log(result);
     return result;
   }
 
