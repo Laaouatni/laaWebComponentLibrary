@@ -25,13 +25,16 @@
   </template> -->
 
   <template id="laa-example" class="{(a)%2?'bg-green-500':'bg-red-500'} text-3xl">
-    hello world {a}
+    hello world {c}
     <script>
       let a = 0;
       let b = 0;
-      let c = 0;
+      <!-- TODO: $: or generically $()=>{} that autoupdates when others vars change... maybe by using expression to call every time proxy updates -->
+      $: c = a+b;
       thisComponent.addEventListener("click", () => {
         a++;
+        b++;
+        // c = a+b;
       });
     </script>
   </template>

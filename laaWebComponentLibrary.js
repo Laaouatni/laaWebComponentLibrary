@@ -48,7 +48,6 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       copyFromTemplateToComponent.templateContent();
       copyFromTemplateToComponent.attributes(["class", "style"]);
       this.initialClassList = [...this.classList];
-      console.log("CONNECTED", this.initialClassList);
       this.stateVariables = new Proxy(this.stateVariables, {
         set: (parent, child, val) => {
           parent[child] = val;
@@ -133,7 +132,6 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       );
       result = result.replaceAll(regexVariable, `${STATE_OBJECT_POSITION_PREFIX_STRING}${thisVariableName}`);
     });
-    console.log(result);
     return result;
   }
 
