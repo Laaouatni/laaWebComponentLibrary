@@ -48,6 +48,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       copyFromTemplateToComponent.templateContent();
       copyFromTemplateToComponent.attributes(["class", "style"]);
       this.initialClassList = [...this.classList];
+      
       this.stateVariables = new Proxy(this.stateVariables, {
         set: (parent, child, val) => {
           parent[child] = val;
@@ -108,7 +109,8 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       };
 
       try {
-        if (eval(thisClassData.condition)) {
+        const evaluatedClassCondition = eval(thisClassData.condition)
+        if (evaluatedClassCondition) {
           updateClassListString += `${thisClassData.trueClass} `;
         }
       } catch (e) {/*skip*/ };
@@ -191,7 +193,10 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
           /\{|\}/g,
           "",
         );
-        return thisComponent.stateVariables[variableName];
+        const variableValue = thisComponent.stateVariables[variableName];
+        const isFunctionVariable = typeof variableValue == "function";
+        const variableValueToReturn = isFunctionVariable ? variableValue() : variableValue;
+        return variableValueToReturn;
       },
     );
   }
