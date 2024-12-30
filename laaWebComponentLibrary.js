@@ -100,12 +100,13 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       }
       const splittedClass = thisClass.split(/\?|:/g);
       const thisClassData = {
-        condition: addSyntacticSugarClassConditions(splittedClass[0], thisComponent),
+        condition: addSyntacticSugarClassConditions(
+          splittedClass[0],
+          thisComponent,
+        ),
         trueClass: splittedClass[1].replaceAll("'", ""),
         falseClass: splittedClass[2].replaceAll("'", ""),
       };
-
-      console.log(thisClassData.condition);
 
       // if (eval(thisClassData.condition)) {
       //   updateClassListString += `${thisClassData.trueClass} `;
@@ -124,8 +125,13 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
    */
   function addSyntacticSugarClassConditions(conditionString, thisComponent) {
     let result = conditionString.replace("{", "");
-    Object.keys(thisComponent.stateVariables).forEach((thisVariable) => {
-      console.log(thisVariable);
+    Object.keys(thisComponent.stateVariables).forEach((thisVariableName) => {
+      const regexVariable = new RegExp(
+        `(?<!\\w)(${thisVariableName})(?!\\w)`,
+        "g",
+      );
+      result = result.replaceAll(regexVariable, `${STATE_OBJECT_POSITION_PREFIX_STRING}${thisVariableName}`);
+      console.log(thisVariableName, result);
     });
     return result;
   }
