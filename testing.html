@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="./laaWebComponentLibrary.js"></script>
+</head>
+
+<body class="grid gap-8 p-2">
+  <laa-example class="{a>3?'outline':'outline-none'}"></laa-example>
+  <!-- <laa-idk></laa-idk>
+
+  <template id="laa-idk">
+    idk {a}
+
+    <script>
+      let a = 0;
+      thisComponent.addEventListener("click", () => {
+        a++;
+      });
+    </script>
+  </template> -->
+
+  <template id="laa-example" class="{(a)%2?'bg-green-500':'bg-red-500'} text-3xl">
+    hello world {c}
+    <script>
+      let a = 0;
+      let b = 0;
+      <!-- TODO: $: or generically $()=>{} that autoupdates when others vars change... maybe by using expression to call every time proxy updates -->
+      $: c = a+b;
+      thisComponent.addEventListener("click", () => {
+        a++;
+        b++;
+        // c = a+b;
+      });
+    </script>
+  </template>
+</body>
+
+</html>
