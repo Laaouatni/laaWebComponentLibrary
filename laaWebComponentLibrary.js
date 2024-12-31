@@ -60,6 +60,14 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       });
 
       copyFromTemplateToComponent.scripts(this);
+
+      const isForLoop = this.nodeName === "LAA-FOR";
+
+      if (isForLoop) {
+        const slotContent = minifyHtmlString(this.innerHTML);
+        const slotContentWithoutScripts = minifyHtmlString(this.innerHTML).replace(/<script>.*<\/script>/g, "");
+        console.log(slotContent)
+      }
     }
 
     _disconnectedCallback() {}
