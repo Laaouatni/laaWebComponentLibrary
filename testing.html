@@ -10,11 +10,12 @@
 </head>
 
 <body class="grid gap-8 p-2">
-  <laa-example class="{a>3?'outline':'outline-none'}"></laa-example>
+  $for(thisItem : [0,1,2])
+    <laa-example class="{a>3?'outline':'outline-none'}">{thisItem}</laa-example>
+  $endfor
 
   <template id="laa-example" class="{(a)%2?'bg-green-500':'bg-red-500'} text-3xl">
     hello world {c}
-    <!-- <div></div> -->
     <script>
       let a = 0;
       let b = 0;
