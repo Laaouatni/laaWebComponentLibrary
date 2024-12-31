@@ -1,4 +1,5 @@
 /* created by Laaouatni - https://github.com/Laaouatni/ */
+
 document.querySelectorAll("template").forEach((thisTemplateElement) => {
   const STATE_OBJECT_POSITION_PREFIX_STRING = "thisComponent.stateVariables.";
   class ThisComponent extends HTMLElement {
@@ -40,13 +41,13 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       this._connectedCallback();
 
       const copyFromTemplateToComponent = {
-        templateContent: copyTemplateContentToComponentShadowDom.bind(this),
-        attributes: copyAttributesFromTemplateToComponent.bind(this),
-        scripts: copyScriptsFromTemplateToComponent.bind(this),
+        templateContent: copyTemplateContentToComponentShadowDom,
+        attributes: copyAttributesFromTemplateToComponent,
+        scripts: copyScriptsFromTemplateToComponent,
       };
 
-      copyFromTemplateToComponent.templateContent();
-      copyFromTemplateToComponent.attributes(["class", "style"]);
+      copyFromTemplateToComponent.templateContent(this);
+      copyFromTemplateToComponent.attributes(this, ["class", "style"]);
       this.initialClassList = [...this.classList];
       
       this.stateVariables = new Proxy(this.stateVariables, {
@@ -58,7 +59,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
         },
       });
 
-      copyFromTemplateToComponent.scripts();
+      copyFromTemplateToComponent.scripts(this);
     }
 
     _disconnectedCallback() {}
@@ -91,7 +92,13 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
   function updateClassAttribute(thisComponent) {
     let updateClassListString = "";
 
-    thisComponent.initialClassList.forEach((thisClass) => {
+    thisComponent.initialClassList.forEach(
+      /**
+       * 
+       * @param {typeof thisComponent.initialClassList[number]} thisClass 
+       * @returns 
+       */
+      (thisClass) => {
       const isDynamicClass =
         thisClass.startsWith("{") && thisClass.endsWith("}");
       if (!isDynamicClass) {
@@ -113,7 +120,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
         if (evaluatedClassCondition) {
           updateClassListString += `${thisClassData.trueClass} `;
         }
-      } catch (e) {/*skip*/ };
+      } catch (e) {/*skip*/};
     });
 
     thisComponent.setAttribute("class", updateClassListString.trim());
@@ -201,38 +208,46 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     );
   }
 
-  function copyTemplateContentToComponentShadowDom() {
-    this.shadowDom = this.attachShadow({ mode: "open" });
+  /**
+   * 
+   * @param {ThisComponent} thisComponent 
+   */
+  function copyTemplateContentToComponentShadowDom(thisComponent) {
+    thisComponent.shadowDom = thisComponent.attachShadow({ mode: "open" });
     const clonedTemplateContent = thisTemplateElement.content.cloneNode(true);
 
     clonedTemplateContent.childNodes.forEach((thisChild) => {
       if (thisChild instanceof HTMLScriptElement) thisChild.remove();
     });
 
-    this.shadowDom.appendChild(clonedTemplateContent);
+    thisComponent.shadowDom.appendChild(clonedTemplateContent);
   }
 
   /**
-   *
+   * @param {ThisComponent} thisComponent
    * @param {string[]} attributesToCopyArray
    */
-  function copyAttributesFromTemplateToComponent(attributesToCopyArray) {
+  function copyAttributesFromTemplateToComponent(thisComponent, attributesToCopyArray) {
     attributesToCopyArray.forEach((thisAttributeName) => {
       if (!thisTemplateElement.hasAttribute(thisAttributeName)) return;
 
-      this.setAttribute(
+      thisComponent.setAttribute(
         thisAttributeName,
         `${
-          this.getAttribute(thisAttributeName) || ""
+          thisComponent.getAttribute(thisAttributeName) || ""
         } ${thisTemplateElement.getAttribute(thisAttributeName)}`.trim(),
       );
     });
   }
 
-  function copyScriptsFromTemplateToComponent() {
+  /**
+   * 
+   * @param {ThisComponent} thisComponent 
+   */
+  function copyScriptsFromTemplateToComponent(thisComponent) {
     const allScriptElementsInside = {
       template: thisTemplateElement.content.querySelectorAll("script"),
-      component: this.querySelectorAll("script"),
+      component: thisComponent.querySelectorAll("script"),
     };
 
     const generatedScriptElementInsideComponent =
@@ -258,7 +273,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
         syntacticSugarVariablesAddedToScriptString,
       ).replaceAll("  ", "");
 
-    this.appendChild(generatedScriptElementInsideComponent);
+    thisComponent.appendChild(generatedScriptElementInsideComponent);
   }
 
   /**
