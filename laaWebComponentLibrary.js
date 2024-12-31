@@ -49,7 +49,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       copyFromTemplateToComponent.templateContent(this);
       copyFromTemplateToComponent.attributes(this, ["class", "style"]);
       this.initialClassList = [...this.classList];
-      
+
       this.stateVariables = new Proxy(this.stateVariables, {
         set: (parent, child, val) => {
           parent[child] = val;
@@ -61,13 +61,8 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
 
       copyFromTemplateToComponent.scripts(this);
 
-      const isForLoop = this.nodeName === "LAA-FOR";
-
-      if (isForLoop) {
-        const slotContent = minifyHtmlString(this.innerHTML);
-        const slotContentWithoutScripts = minifyHtmlString(this.innerHTML).replace(/<script>.*<\/script>/g, "");
-        console.log(slotContent)
-      }
+      const isForLoop = this.nodeName === "laa-for".toUpperCase();
+      if (isForLoop) forLoopComponentLogic(this);
     }
 
     _disconnectedCallback() {}
@@ -94,6 +89,23 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
   customElements.define(thisTemplateElement.id, ThisComponent);
 
   /**
+   * 
+   * @param {ThisComponent} thisComponent 
+   */
+  function forLoopComponentLogic(thisComponent) {
+    const slotContent = minifyHtmlString(thisComponent.innerHTML);
+    const slotContentWithoutScripts = minifyHtmlString(thisComponent.innerHTML).replace(
+      /<script>.*<\/script>/g,
+      "",
+    );
+    const forAttributes = {
+      arrayItems: thisComponent.getAttribute("arrayItems"),
+      thisItem: thisComponent.getAttribute("thisItem"),
+    };
+    console.log(forAttributes);
+  }
+
+  /**
    *
    * @param {ThisComponent} thisComponent
    */
@@ -102,34 +114,37 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
 
     thisComponent.initialClassList.forEach(
       /**
-       * 
-       * @param {typeof thisComponent.initialClassList[number]} thisClass 
-       * @returns 
+       *
+       * @param {typeof thisComponent.initialClassList[number]} thisClass
+       * @returns
        */
       (thisClass) => {
-      const isDynamicClass =
-        thisClass.startsWith("{") && thisClass.endsWith("}");
-      if (!isDynamicClass) {
-        updateClassListString += `${thisClass} `;
-        return;
-      }
-      const splittedClass = thisClass.split(/\?|:/g);
-      const thisClassData = {
-        condition: addSyntacticSugarClassConditions(
-          splittedClass[0],
-          thisComponent,
-        ),
-        trueClass: splittedClass[1].replaceAll("'", ""),
-        falseClass: splittedClass[2].replaceAll("'", ""),
-      };
-
-      try {
-        const evaluatedClassCondition = eval(thisClassData.condition)
-        if (evaluatedClassCondition) {
-          updateClassListString += `${thisClassData.trueClass} `;
+        const isDynamicClass =
+          thisClass.startsWith("{") && thisClass.endsWith("}");
+        if (!isDynamicClass) {
+          updateClassListString += `${thisClass} `;
+          return;
         }
-      } catch (e) {/*skip*/};
-    });
+        const splittedClass = thisClass.split(/\?|:/g);
+        const thisClassData = {
+          condition: addSyntacticSugarClassConditions(
+            splittedClass[0],
+            thisComponent,
+          ),
+          trueClass: splittedClass[1].replaceAll("'", ""),
+          falseClass: splittedClass[2].replaceAll("'", ""),
+        };
+
+        try {
+          const evaluatedClassCondition = eval(thisClassData.condition);
+          if (evaluatedClassCondition) {
+            updateClassListString += `${thisClassData.trueClass} `;
+          }
+        } catch (e) {
+          /*skip*/
+        }
+      },
+    );
 
     thisComponent.setAttribute("class", updateClassListString.trim());
   }
@@ -147,7 +162,10 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
         `(?<!\\w)(${thisVariableName})(?!\\w)`,
         "g",
       );
-      result = result.replaceAll(regexVariable, `${STATE_OBJECT_POSITION_PREFIX_STRING}${thisVariableName}`);
+      result = result.replaceAll(
+        regexVariable,
+        `${STATE_OBJECT_POSITION_PREFIX_STRING}${thisVariableName}`,
+      );
     });
     return result;
   }
@@ -210,15 +228,17 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
         );
         const variableValue = thisComponent.stateVariables[variableName];
         const isFunctionVariable = typeof variableValue == "function";
-        const variableValueToReturn = isFunctionVariable ? variableValue() : variableValue;
+        const variableValueToReturn = isFunctionVariable
+          ? variableValue()
+          : variableValue;
         return variableValueToReturn;
       },
     );
   }
 
   /**
-   * 
-   * @param {ThisComponent} thisComponent 
+   *
+   * @param {ThisComponent} thisComponent
    */
   function copyTemplateContentToComponentShadowDom(thisComponent) {
     thisComponent.shadowDom = thisComponent.attachShadow({ mode: "open" });
@@ -235,7 +255,10 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
    * @param {ThisComponent} thisComponent
    * @param {string[]} attributesToCopyArray
    */
-  function copyAttributesFromTemplateToComponent(thisComponent, attributesToCopyArray) {
+  function copyAttributesFromTemplateToComponent(
+    thisComponent,
+    attributesToCopyArray,
+  ) {
     attributesToCopyArray.forEach((thisAttributeName) => {
       if (!thisTemplateElement.hasAttribute(thisAttributeName)) return;
 
@@ -249,8 +272,8 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
   }
 
   /**
-   * 
-   * @param {ThisComponent} thisComponent 
+   *
+   * @param {ThisComponent} thisComponent
    */
   function copyScriptsFromTemplateToComponent(thisComponent) {
     const allScriptElementsInside = {
