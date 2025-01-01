@@ -38,6 +38,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
 
     _connectedCallback() {}
     connectedCallback() {
+      performance.mark("start");
       this._connectedCallback();
 
       const isForLoop = this.nodeName === "laa-for".toUpperCase();
@@ -63,6 +64,8 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       });
 
       copyFromTemplateToComponent.scripts(this);
+      performance.mark("end");
+      console.log(performance.measure("Time to render", "start", "end").duration)
     }
 
     _disconnectedCallback() {}
