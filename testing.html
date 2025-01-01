@@ -13,7 +13,13 @@
 </head>
 
 <body class="grid gap-8 p-2">
-
+  <laa-example>
+    <laa-example>
+      <script>
+        console.log("b", thisComponent)
+      </script>
+    </laa-example>
+  </laa-example>
   <laa-for class="grid outline" arrayItems="arrayTest" thisItem="thisItem">
     text: {thisItem}
     <div>div: {thisItem}</div><br>
@@ -30,7 +36,9 @@
       <laa-another-example>
         {thisItem}
         <div>
-          <laa-example>{thisItem}</laa-example><br>
+          <laa-example>{thisItem}
+
+          </laa-example><br>
           <div>
             div: {thisItem}<br>
             <laa-another-example>
@@ -69,7 +77,7 @@
   </template> -->
 
   <template id="laa-another-example">
-    laa-another-example: {thisItem} 
+    laa-another-example: {thisItem}
     <slot></slot>
   </template>
 

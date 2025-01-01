@@ -190,7 +190,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     }
 
     const isChildComponent = thisParameterChild.nodeName.includes("-");
-    
+
     if (isChildComponent) {
       const codeToAppend = `
         let ${forAttributes.thisItem} = ${thisItemValue};
@@ -198,14 +198,10 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
 
       let thisScript = thisParameterChild.querySelector("script");
 
-      console.log("thisScript", thisScript);
-
-      if (!thisScript) {
-        thisScript = document.createElement("script");
-        thisScript.textContent = codeToAppend;
-        thisParameterChild.appendChild(thisScript);
-        return;
-      }
+      thisScript = document.createElement("script");
+      thisScript.textContent = codeToAppend;
+      // console.log(thisScript, thisParameterChild.innerHTML);
+      // thisParameterChild.appendChild(thisScript);
     }
 
     thisParameterChild.innerHTML = (
