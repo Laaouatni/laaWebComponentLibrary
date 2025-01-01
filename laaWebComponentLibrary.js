@@ -113,21 +113,30 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       arrayItemsValues.forEach((thisItemValue) => {
         thisComponent.childNodes.forEach((thisChild) => {
           const isChildComponent = thisChild.nodeName.includes("-");
+          const isText = thisChild instanceof Text;
 
-          console.log(thisChild)
-  
+          if(thisChild instanceof HTMLScriptElement) return;
+          
           if (isChildComponent) {
             thisChild.stateVariables[forAttributes.thisItem] = thisItemValue;
             return;
           }
-
+          
+          if (isText) {
+            thisChild.textContent = (thisChild.textContent || "").replaceAll(
+              new RegExp(`{${forAttributes.thisItem}}`, "g"),
+              thisItemValue,
+            );
+            return;
+          }
+          
+          console.log(thisChild);
           // console.log(thisChild)
-
 
           // console.log(thisItemValue, thisChild)
         });
       });
-    }, 0)
+    }, 0);
 
     // thisComponent.innerHTML = "";
     // arrayItemsValues.forEach((thisItemValue) => {
