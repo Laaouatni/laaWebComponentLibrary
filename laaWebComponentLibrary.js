@@ -134,13 +134,12 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     thisItemValue,
     thisParameterChild,
   ) {
-    const forAttributes = {
-      arrayItems: thisComponent.getAttribute("arrayItems"),
-      thisItem: thisComponent.getAttribute("thisItem") || "thisItem",
-    };
-
     thisParameterChild.childNodes.forEach((thisChild) => {
-      const changeStateLogicResult = changeStateLogic(thisChild);
+      const changeStateLogicResult = changeStateLogic(
+        thisComponent,
+        thisItemValue,
+        thisParameterChild,
+      );
       if (!changeStateLogicResult?.canContinueRecursion) return;
 
       recursiveChangeStateChildComponent(
@@ -149,53 +148,63 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
         thisChild,
       );
     });
+  }
 
-    /**
-     *
-     * @param {ChildNode} thisChild
-     * @returns {{canContinueRecursion: boolean} | undefined}
-     */
-    function changeStateLogic(thisChild) {
-      const isScript = thisChild instanceof HTMLScriptElement;
-      if (isScript) return;
+  /**
+   *
+   * @param {ThisComponent} thisComponent
+   * @param {ChildNode} thisParameterChild
+   * @param {string} thisItemValue
+   */
+  function changeStateLogic(thisComponent, thisItemValue, thisParameterChild) {
+    const forAttributes = {
+      arrayItems: thisComponent.getAttribute("arrayItems"),
+      thisItem: thisComponent.getAttribute("thisItem") || "thisItem",
+    };
+    const isScript = thisParameterChild instanceof HTMLScriptElement;
+    if (isScript) return;
 
-      const isText = thisChild instanceof Text;
-      if (isText) {
-        const isTextEmpty =
-          (thisChild.textContent || "").replace("\n", "").trim() === "";
-        if (isTextEmpty) return;
+    const isText = thisParameterChild instanceof Text;
+    if (isText) {
+      const isTextEmpty =
+        (thisParameterChild.textContent || "").replace("\n", "").trim() === "";
+      if (isTextEmpty) return;
 
-        thisChild.textContent = (thisChild.textContent || "").replaceAll(
-          new RegExp(`{${forAttributes.thisItem}}`, "g"),
-          thisItemValue,
-        );
+      thisParameterChild.textContent = (
+        thisParameterChild.textContent || ""
+      ).replaceAll(
+        new RegExp(`{${forAttributes.thisItem}}`, "g"),
+        thisItemValue,
+      );
 
-        return;
-      }
-
-      const hasComponentNested =
-        !!thisChild.innerHTML.match(/\<[^\/]*-[^\>]*\>/g);
-
-      if (!hasComponentNested) {
-        const isChildComponent = thisChild.nodeName.includes("-");
-
-        if (isChildComponent) {
-          thisChild.stateVariables[forAttributes.thisItem] = thisItemValue;
-          return;
-        }
-
-        thisChild.innerHTML = (thisChild.innerHTML || "").replaceAll(
-          new RegExp(`{${forAttributes.thisItem}}`, "g"),
-          thisItemValue,
-        );
-
-        return;
-      }
-
-      return {
-        canContinueRecursion: true,
-      };
+      return;
     }
+
+    const hasComponentNested =
+      !!thisParameterChild.innerHTML.match(/\<[^\/]*-[^\>]*\>/g);
+
+    if (!hasComponentNested) {
+      const isChildComponent = thisParameterChild.nodeName.includes("-");
+
+      if (isChildComponent) {
+        thisParameterChild.stateVariables[forAttributes.thisItem] =
+          thisItemValue;
+        return;
+      }
+
+      thisParameterChild.innerHTML = (
+        thisParameterChild.innerHTML || ""
+      ).replaceAll(
+        new RegExp(`{${forAttributes.thisItem}}`, "g"),
+        thisItemValue,
+      );
+
+      return;
+    }
+
+    return {
+      canContinueRecursion: true,
+    };
   }
 
   /**
