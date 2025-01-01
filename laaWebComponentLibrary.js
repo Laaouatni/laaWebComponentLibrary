@@ -163,6 +163,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     if (isScript) return;
 
     const isText = thisParameterChild instanceof Text;
+    console.log(thisParameterChild);
     if (isText) {
       const isTextEmpty =
         (thisParameterChild.textContent || "").replace("\n", "").trim() === "";
@@ -172,15 +173,14 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
         thisParameterChild.textContent || ""
       ).replaceAll(
         new RegExp(`{${forAttributes.thisItem}}`, "g"),
-        thisItemValue,
+        `${thisItemValue}`,
       );
 
       return;
     }
 
-    
     const hasComponentNested =
-    !!thisParameterChild.innerHTML.match(/\<[^\/]*-[^\>]*\>/g);
+      !!(thisParameterChild.innerHTML.match(/\<[^\/]*-[^\>]*\>/g));
     
     if (hasComponentNested) {
       return {
@@ -193,7 +193,6 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       thisParameterChild.stateVariables[forAttributes.thisItem] = thisItemValue;
       return;
     }
-    console.log(thisParameterChild);
 
     thisParameterChild.innerHTML = (
       thisParameterChild.innerHTML || ""
