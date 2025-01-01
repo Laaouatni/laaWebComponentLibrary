@@ -93,11 +93,6 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
    * @param {ThisComponent} thisComponent
    */
   function forLoopComponentLogic(thisComponent) {
-    const slotContent = minifyHtmlString(thisComponent.innerHTML);
-    const slotContentWithoutScripts = minifyHtmlString(
-      thisComponent.innerHTML,
-    ).replaceAll(/<script>.*<\/script>/g, "");
-
     const forAttributes = {
       arrayItems: thisComponent.getAttribute("arrayItems"),
       thisItem: thisComponent.getAttribute("thisItem") || "thisItem",
@@ -110,15 +105,16 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
 
     const arrayItemsValues = eval(forAttributes.arrayItems ?? "[]");
 
+    thisComponent.childNodes.forEach((thisChild) => {
+      recursiveChangeStateChildComponent(
+        thisComponent,
+        999,
+        thisChild,
+      );
+    });
+
     setTimeout(() => {
       arrayItemsValues.forEach((thisItemValue) => {
-        thisComponent.childNodes.forEach((thisChild) => {
-          recursiveChangeStateChildComponent(
-            thisComponent,
-            thisItemValue,
-            thisChild,
-          );
-        });
       });
     }, 0);
   }
@@ -127,34 +123,36 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
    *
    * @param {ThisComponent} thisComponent
    * @param {ChildNode} thisParameterChild
-   * @param {string} thisItemValue
+   * @param {string | number} thisItemValue
    */
   function recursiveChangeStateChildComponent(
     thisComponent,
     thisItemValue,
     thisParameterChild,
   ) {
-    thisParameterChild.childNodes.forEach((thisChild) => {
-      const changeStateLogicResult = changeStateLogic(
-        thisComponent,
-        thisItemValue,
-        thisParameterChild,
-      );
-      if (!changeStateLogicResult?.canContinueRecursion) return;
-
-      recursiveChangeStateChildComponent(
-        thisComponent,
-        thisItemValue,
-        thisChild,
-      );
-    });
+    setTimeout(() => {
+      thisParameterChild.childNodes.forEach((thisChild) => {
+        const changeStateLogicResult = changeStateLogic(
+          thisComponent,
+          thisItemValue,
+          thisParameterChild,
+        );
+        if (!changeStateLogicResult?.canContinueRecursion) return;
+  
+        recursiveChangeStateChildComponent(
+          thisComponent,
+          thisItemValue,
+          thisChild,
+        );
+      });
+    }, 0);
   }
 
   /**
    *
    * @param {ThisComponent} thisComponent
    * @param {ChildNode} thisParameterChild
-   * @param {string} thisItemValue
+   * @param {string | number} thisItemValue
    */
   function changeStateLogic(thisComponent, thisItemValue, thisParameterChild) {
     const forAttributes = {
