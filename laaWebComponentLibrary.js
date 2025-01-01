@@ -113,10 +113,17 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       arrayItemsValues.forEach((thisItemValue) => {
         thisComponent.childNodes.forEach((thisChild) => {
           const isChildComponent = thisChild.nodeName.includes("-");
+
+          console.log(thisChild)
   
           if (isChildComponent) {
             thisChild.stateVariables[forAttributes.thisItem] = thisItemValue;
+            return;
           }
+
+          // console.log(thisChild)
+
+
           // console.log(thisItemValue, thisChild)
         });
       });

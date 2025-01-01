@@ -16,14 +16,29 @@
 
   <laa-for class="grid" arrayItems="arrayTest" thisItem="thisItem">
     <laa-example class="{a>3?'outline':'outline-none'}">{thisItem}</laa-example>
+    <div>div: {thisItem}</div>
+    <span>span: {thisItem}</span>
+    <div>
+      <laa-another-example>{thisItem}</laa-another-example>
+    </div>
+    fuori: {thisItem}
   </laa-for>
 
   <template id="laa-for">
     <slot></slot>
   </template>
 
+  <!-- <template id="laa-for-child">
+    <slot></slot>
+  </template> -->
+
+  <template id="laa-another-example">
+    laa-another-example:
+    <slot></slot>
+  </template>
+
   <template id="laa-example" class="{(a)%2?'bg-green-500':'bg-red-500'} text-3xl">
-    thisItem: <slot></slot> {thisItem} and a is: {a}
+    laaExample: <slot></slot> and a is: {a}
     <script>
       let a = 0;
       thisComponent.addEventListener('click', () => {
