@@ -112,42 +112,11 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     setTimeout(() => {
       arrayItemsValues.forEach((thisItemValue) => {
         thisComponent.childNodes.forEach((thisChild) => {
-          const isScript = thisChild instanceof HTMLScriptElement;
-          if (isScript) return;
-
-          // const isChildComponent = thisChild.nodeName.includes("-");
-          // if (isChildComponent) {
-          //   thisChild.stateVariables[forAttributes.thisItem] = thisItemValue;
-          //   return;
-          // }
-
-          const isText = thisChild instanceof Text;
-          if (isText) {
-            thisChild.textContent = (thisChild.textContent || "").replaceAll(
-              new RegExp(`{${forAttributes.thisItem}}`, "g"),
-              thisItemValue,
-            );
-            return;
-          }
-
-          const hasComponentNested =
-            thisChild.innerHTML.match(/\<[^\/]*-[^\>]*\>/g);
-          if (hasComponentNested) {
-            recursiveChangeStateChildComponent(
-              thisComponent,
-              thisItemValue,
-              thisChild,
-            );
-            return;
-          }
-
-          thisChild.innerHTML = (thisChild.innerHTML || "").replaceAll(
-            new RegExp(`{${forAttributes.thisItem}}`, "g"),
+          recursiveChangeStateChildComponent(
+            thisComponent,
             thisItemValue,
+            thisChild,
           );
-          // console.log(thisChild)
-
-          // console.log(thisItemValue, thisChild)
         });
       });
     }, 0);
@@ -198,7 +167,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
 
       if (!hasComponentNested) {
         const isChildComponent = thisChild.nodeName.includes("-");
-        
+
         if (isChildComponent) {
           thisChild.stateVariables[forAttributes.thisItem] = thisItemValue;
           return;
