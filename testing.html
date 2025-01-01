@@ -15,29 +15,29 @@
 <body class="grid gap-8 p-2">
 
   <laa-for class="grid" arrayItems="arrayTest" thisItem="thisItem">
-    <div>div: {thisItem}</div>
-    <laa-example class="{a>3?'outline':'outline-none'}">{thisItem}</laa-example>
-    <div>div: {thisItem}</div>
-    <span>span: {thisItem}</span>
-    <laa-example>{thisItem}</laa-example>
+    <div>div: {thisItem}</div><br>
+    <laa-example class="{a>3?'outline':'outline-none'}">{thisItem}</laa-example><br>
+    <div>div: {thisItem}</div><br>
+    <span>span: {thisItem}</span><br>
+    <laa-example>{thisItem}</laa-example><br>
     <div>
-      <laa-example>{thisItem}</laa-example>
+      <laa-example>{thisItem}</laa-example><br>
       <laa-another-example>
         {thisItem}
         <div>
-          <laa-example>{thisItem}</laa-example>
+          <laa-example>{thisItem}</laa-example><br>
           <div>
-            div: {thisItem}
+            div: {thisItem}<br>
             <laa-another-example>
-              {thisItem}
-              <laa-example>{thisItem}</laa-example>
+              {thisItem}<br>
+              <laa-example>{thisItem}</laa-example><br>
             </laa-another-example>
           </div>
         </div>
-      </laa-another-example>
-      text: {thisItem}
-      <div>div: {thisItem}</div>
-      <div>div: {thisItem}</div>
+      </laa-another-example><br>
+      text: {thisItem}<br>
+      <div>div: {thisItem}</div><br>
+      <div>div: {thisItem}</div><br>
     </div>
     fuori: {thisItem}
   </laa-for>

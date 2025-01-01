@@ -121,17 +121,6 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
         });
       });
     }, 0);
-
-    // thisComponent.innerHTML = "";
-    // arrayItemsValues.forEach((thisItemValue) => {
-    //   let slotStringToAdd = slotContentWithoutScripts;
-    //   slotStringToAdd = slotStringToAdd.replaceAll(
-    //     new RegExp(`{${forAttributes.thisItem}}`, "g"),
-    //     thisItemValue,
-    //   );
-    //   thisComponent.innerHTML += slotStringToAdd;
-    //   console.log(slotStringToAdd, thisItemValue);
-    // });
   }
 
   /**
