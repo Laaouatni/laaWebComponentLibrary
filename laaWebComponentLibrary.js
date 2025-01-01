@@ -38,7 +38,6 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
 
     _connectedCallback() {}
     connectedCallback() {
-      performance.mark("start");
       this._connectedCallback();
 
       const isForLoop = this.nodeName === "laa-for".toUpperCase();
@@ -64,8 +63,6 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       });
 
       copyFromTemplateToComponent.scripts(this);
-      performance.mark("end");
-      console.log(performance.measure("Time to render", "start", "end").duration)
     }
 
     _disconnectedCallback() {}
@@ -128,6 +125,8 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     }, 0);
   }
 
+  let i = 0;
+
   /**
    *
    * @param {ThisComponent} thisComponent
@@ -140,6 +139,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     thisParameterChild,
   ) {
     setTimeout(() => {
+      console.log(++i)
       thisParameterChild.childNodes.forEach((thisChild) => {
         const changeStateLogicResult = changeStateLogic(
           thisComponent,
