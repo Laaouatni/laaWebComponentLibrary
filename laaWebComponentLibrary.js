@@ -197,10 +197,18 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
         !!thisChild.innerHTML.match(/\<[^\/]*-[^\>]*\>/g);
 
       if (!hasComponentNested) {
+        const isChildComponent = thisChild.nodeName.includes("-");
+        
+        if (isChildComponent) {
+          thisChild.stateVariables[forAttributes.thisItem] = thisItemValue;
+          return;
+        }
+
         thisChild.innerHTML = (thisChild.innerHTML || "").replaceAll(
           new RegExp(`{${forAttributes.thisItem}}`, "g"),
           thisItemValue,
         );
+
         return;
       }
 
@@ -209,8 +217,6 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
         thisItemValue,
         thisChild,
       );
-
-      console.log(thisChild);
     });
   }
 
