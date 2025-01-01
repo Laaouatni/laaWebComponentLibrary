@@ -20,9 +20,11 @@
     <span>span: {thisItem}</span>
     <div>
       <laa-another-example>
+        {thisItem}
         <div>
           <laa-example>{thisItem}</laa-example>
           <div>
+            div: {thisItem}
             <laa-another-example>
               {thisItem}
               <laa-example>{thisItem}</laa-example>
@@ -30,9 +32,9 @@
           </div>
         </div>
       </laa-another-example>
-      ciao
-      <div>hello</div>
-      <div>{thisItem}</div>
+      text: {thisItem}
+      <div>div: {thisItem}</div>
+      <div>div: {thisItem}</div>
     </div>
     fuori: {thisItem}
   </laa-for>

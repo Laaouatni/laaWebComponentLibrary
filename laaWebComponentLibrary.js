@@ -113,14 +113,14 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       arrayItemsValues.forEach((thisItemValue) => {
         thisComponent.childNodes.forEach((thisChild) => {
           const isScript = thisChild instanceof HTMLScriptElement;
-          if(isScript) return;
-          
-          const isChildComponent = thisChild.nodeName.includes("-");
-          if (isChildComponent) {
-            thisChild.stateVariables[forAttributes.thisItem] = thisItemValue;
-            return;
-          }
-          
+          if (isScript) return;
+
+          // const isChildComponent = thisChild.nodeName.includes("-");
+          // if (isChildComponent) {
+          //   thisChild.stateVariables[forAttributes.thisItem] = thisItemValue;
+          //   return;
+          // }
+
           const isText = thisChild instanceof Text;
           if (isText) {
             thisChild.textContent = (thisChild.textContent || "").replaceAll(
@@ -129,16 +129,11 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
             );
             return;
           }
-          
-          const hasComponentNested = thisChild.innerHTML.match(/\<[^\/]*-[^\>]*\>/g);
-          if (hasComponentNested) {
-            recursiveChangeStateChildComponent(thisChild);
 
-            function recursiveChangeStateChildComponent(thisChild) {
-              const hasComponentNested = !!thisChild.innerHTML.match(/\<[^\/]*-[^\>]*\>/g);
-              console.log(hasComponentNested, thisChild);
-              // if (!!hasComponentNested(thisChild)) return recursiveChangeStateChildComponent(thisChild);
-            }
+          const hasComponentNested =
+            thisChild.innerHTML.match(/\<[^\/]*-[^\>]*\>/g);
+          if (hasComponentNested) {
+            recursiveChangeStateChildComponent(thisComponent, thisItemValue, thisChild);
             return;
           }
 
@@ -163,6 +158,55 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     //   thisComponent.innerHTML += slotStringToAdd;
     //   console.log(slotStringToAdd, thisItemValue);
     // });
+  }
+
+  /**
+   *
+   * @param {ThisComponent} thisComponent
+   * @param {ChildNode} thisParameterChild
+   * @param {string} thisItemValue
+   */
+  function recursiveChangeStateChildComponent(
+    thisComponent,
+    thisItemValue,
+    thisParameterChild,
+  ) {
+    const forAttributes = {
+      arrayItems: thisComponent.getAttribute("arrayItems"),
+      thisItem: thisComponent.getAttribute("thisItem") || "thisItem",
+    };
+
+    console.log(thisParameterChild);
+    thisParameterChild.childNodes.forEach((thisChild) => {
+      const isScript = thisChild instanceof HTMLScriptElement;
+      if (isScript) return;
+
+      const isText = thisChild instanceof Text;
+      if (isText) {
+        thisChild.textContent = (thisChild.textContent || "").replaceAll(
+          new RegExp(`{${forAttributes.thisItem}}`, "g"),
+          thisItemValue,
+        );
+        return;
+      }
+
+      const hasComponentNested =
+        !!thisChild.innerHTML.match(/\<[^\/]*-[^\>]*\>/g);
+
+      if (!hasComponentNested) {
+        thisChild.innerHTML = (thisChild.innerHTML || "").replaceAll(
+          new RegExp(`{${forAttributes.thisItem}}`, "g"),
+          thisItemValue,
+        );
+        return;
+      }
+
+      const isChildComponent = thisChild.nodeName.includes("-");
+
+      if (isChildComponent) {
+        recursiveChangeStateChildComponent(thisComponent, thisItemValue, thisChild);
+      }
+    });
   }
 
   /**
