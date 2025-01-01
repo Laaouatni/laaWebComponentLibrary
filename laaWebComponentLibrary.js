@@ -133,7 +133,11 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
           const hasComponentNested =
             thisChild.innerHTML.match(/\<[^\/]*-[^\>]*\>/g);
           if (hasComponentNested) {
-            recursiveChangeStateChildComponent(thisComponent, thisItemValue, thisChild);
+            recursiveChangeStateChildComponent(
+              thisComponent,
+              thisItemValue,
+              thisChild,
+            );
             return;
           }
 
@@ -176,7 +180,6 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       thisItem: thisComponent.getAttribute("thisItem") || "thisItem",
     };
 
-    console.log(thisParameterChild);
     thisParameterChild.childNodes.forEach((thisChild) => {
       const isScript = thisChild instanceof HTMLScriptElement;
       if (isScript) return;
@@ -201,11 +204,13 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
         return;
       }
 
-      const isChildComponent = thisChild.nodeName.includes("-");
+      recursiveChangeStateChildComponent(
+        thisComponent,
+        thisItemValue,
+        thisChild,
+      );
 
-      if (isChildComponent) {
-        recursiveChangeStateChildComponent(thisComponent, thisItemValue, thisChild);
-      }
+      console.log(thisChild);
     });
   }
 
