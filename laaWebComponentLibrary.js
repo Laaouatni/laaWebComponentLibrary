@@ -40,6 +40,9 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     connectedCallback() {
       this._connectedCallback();
 
+      const isForLoop = this.nodeName === "laa-for".toUpperCase();
+      if (isForLoop) forLoopComponentLogic(this);
+
       const copyFromTemplateToComponent = {
         templateContent: copyTemplateContentToComponentShadowDom,
         attributes: copyAttributesFromTemplateToComponent,
@@ -60,9 +63,6 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       });
 
       copyFromTemplateToComponent.scripts(this);
-
-      const isForLoop = this.nodeName === "laa-for".toUpperCase();
-      if (isForLoop) forLoopComponentLogic(this);
     }
 
     _disconnectedCallback() {}
@@ -89,20 +89,36 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
   customElements.define(thisTemplateElement.id, ThisComponent);
 
   /**
-   * 
-   * @param {ThisComponent} thisComponent 
+   *
+   * @param {ThisComponent} thisComponent
    */
   function forLoopComponentLogic(thisComponent) {
     const slotContent = minifyHtmlString(thisComponent.innerHTML);
-    const slotContentWithoutScripts = minifyHtmlString(thisComponent.innerHTML).replace(
-      /<script>.*<\/script>/g,
-      "",
-    );
+    const slotContentWithoutScripts = minifyHtmlString(
+      thisComponent.innerHTML,
+    ).replaceAll(/<script>.*<\/script>/g, "");
     const forAttributes = {
       arrayItems: thisComponent.getAttribute("arrayItems"),
-      thisItem: thisComponent.getAttribute("thisItem"),
+      thisItem: thisComponent.getAttribute("thisItem") || "thisItem",
     };
-    console.log(forAttributes);
+
+    if (!forAttributes.arrayItems) {
+      const errorStringMessage = `Attribute "arrayItems" is required for "laa-for" tag`;
+      throw new Error(errorStringMessage);
+    }
+
+    const arrayItemsValues = eval(forAttributes.arrayItems ?? "[]");
+
+    thisComponent.innerHTML = "";
+    arrayItemsValues.forEach((thisItemValue) => {
+      let slotStringToAdd = slotContentWithoutScripts;
+      slotStringToAdd = slotStringToAdd.replaceAll(
+        new RegExp(`{${forAttributes.thisItem}}`, "g"),
+        thisItemValue,
+      );
+      thisComponent.innerHTML += slotStringToAdd;
+      console.log(slotStringToAdd, thisItemValue);
+    });
   }
 
   /**

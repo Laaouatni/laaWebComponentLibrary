@@ -23,15 +23,12 @@
   </template>
 
   <template id="laa-example" class="{(a)%2?'bg-green-500':'bg-red-500'} text-3xl">
-    hello world {c}
+    thisItem: <slot></slot> {thisItem} and a is: {a}
     <script>
-      let a = 0;
-      let b = 0;
-      let c = () => { return a + b };
+      let a = arrayTest[arrayTest.length - 1];
+      thisComponent.onClick = () => {
 
-      thisComponent.addEventListener("click", () => {
-        a++;
-      });
+      }
     </script>
   </template>
 </body>
