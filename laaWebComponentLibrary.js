@@ -112,16 +112,16 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     setTimeout(() => {
       arrayItemsValues.forEach((thisItemValue) => {
         thisComponent.childNodes.forEach((thisChild) => {
-          const isChildComponent = thisChild.nodeName.includes("-");
-          const isText = thisChild instanceof Text;
-
-          if(thisChild instanceof HTMLScriptElement) return;
+          const isScript = thisChild instanceof HTMLScriptElement;
+          if(isScript) return;
           
+          const isChildComponent = thisChild.nodeName.includes("-");
           if (isChildComponent) {
             thisChild.stateVariables[forAttributes.thisItem] = thisItemValue;
             return;
           }
           
+          const isText = thisChild instanceof Text;
           if (isText) {
             thisChild.textContent = (thisChild.textContent || "").replaceAll(
               new RegExp(`{${forAttributes.thisItem}}`, "g"),
@@ -130,7 +130,22 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
             return;
           }
           
-          console.log(thisChild);
+          const hasComponentNested = thisChild.innerHTML.match(/\<[^\/]*-[^\>]*\>/g);
+          if (hasComponentNested) {
+            recursiveChangeStateChildComponent(thisChild);
+
+            function recursiveChangeStateChildComponent(thisChild) {
+              const hasComponentNested = !!thisChild.innerHTML.match(/\<[^\/]*-[^\>]*\>/g);
+              console.log(hasComponentNested, thisChild);
+              // if (!!hasComponentNested(thisChild)) return recursiveChangeStateChildComponent(thisChild);
+            }
+            return;
+          }
+
+          thisChild.innerHTML = (thisChild.innerHTML || "").replaceAll(
+            new RegExp(`{${forAttributes.thisItem}}`, "g"),
+            thisItemValue,
+          );
           // console.log(thisChild)
 
           // console.log(thisItemValue, thisChild)

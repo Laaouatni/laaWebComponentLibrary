@@ -19,7 +19,20 @@
     <div>div: {thisItem}</div>
     <span>span: {thisItem}</span>
     <div>
-      <laa-another-example>{thisItem}</laa-another-example>
+      <laa-another-example>
+        <div>
+          <laa-example>{thisItem}</laa-example>
+          <div>
+            <laa-another-example>
+              {thisItem}
+              <laa-example>{thisItem}</laa-example>
+            </laa-another-example>
+          </div>
+        </div>
+      </laa-another-example>
+      ciao
+      <div>hello</div>
+      <div>{thisItem}</div>
     </div>
     fuori: {thisItem}
   </laa-for>
