@@ -97,6 +97,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     const slotContentWithoutScripts = minifyHtmlString(
       thisComponent.innerHTML,
     ).replaceAll(/<script>.*<\/script>/g, "");
+
     const forAttributes = {
       arrayItems: thisComponent.getAttribute("arrayItems"),
       thisItem: thisComponent.getAttribute("thisItem") || "thisItem",
@@ -151,7 +152,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
 
     thisParameterChild.childNodes.forEach((thisChild) => {
       const changeStateLogicResult = changeStateLogic(thisChild);
-      if (!changeStateLogicResult?.continue) return;
+      if (!changeStateLogicResult?.canContinueRecursion) return;
 
       recursiveChangeStateChildComponent(
         thisComponent,
@@ -160,16 +161,26 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       );
     });
 
+    /**
+     *
+     * @param {ChildNode} thisChild
+     * @returns {{canContinueRecursion: boolean} | undefined}
+     */
     function changeStateLogic(thisChild) {
       const isScript = thisChild instanceof HTMLScriptElement;
       if (isScript) return;
 
       const isText = thisChild instanceof Text;
       if (isText) {
+        const isTextEmpty =
+          (thisChild.textContent || "").replace("\n", "").trim() === "";
+        if (isTextEmpty) return;
+
         thisChild.textContent = (thisChild.textContent || "").replaceAll(
           new RegExp(`{${forAttributes.thisItem}}`, "g"),
           thisItemValue,
         );
+
         return;
       }
 
@@ -193,7 +204,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       }
 
       return {
-        continue: true,
+        canContinueRecursion: true,
       };
     }
   }
