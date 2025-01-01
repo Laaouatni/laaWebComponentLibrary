@@ -25,9 +25,14 @@
   <template id="laa-example" class="{(a)%2?'bg-green-500':'bg-red-500'} text-3xl">
     thisItem: <slot></slot> {thisItem} and a is: {a}
     <script>
-      let a = arrayTest[arrayTest.length - 1];
-      thisComponent.onClick = () => {
-
+      let b = 0;
+      let a = () => {
+        console.log(b)
+        return arrayTest[arrayTest.length - 1]
+      };
+      thisComponent.onclick = () => {
+        b++;
+        arrayTest.push(arrayTest[arrayTest.length - 1] + 1);
       }
     </script>
   </template>
