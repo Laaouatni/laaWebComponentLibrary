@@ -105,11 +105,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
 
     const arrayItemsValues = eval(forAttributes.arrayItems ?? "[]");
 
-    recursiveChangeStateChildComponent(
-      thisComponent,
-      999,
-      thisComponent,
-    );
+    recursiveChangeStateChildComponent(thisComponent, 999, thisComponent);
 
     // thisComponent.childNodes.forEach((thisChild) => {
     //   recursiveChangeStateChildComponent(
@@ -120,12 +116,9 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     // });
 
     setTimeout(() => {
-      arrayItemsValues.forEach((thisItemValue) => {
-      });
+      arrayItemsValues.forEach((thisItemValue) => {});
     }, 0);
   }
-
-  let i = 0;
 
   /**
    *
@@ -138,23 +131,20 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     thisItemValue,
     thisParameterChild,
   ) {
-    setTimeout(() => {
-      console.log(++i)
-      thisParameterChild.childNodes.forEach((thisChild) => {
-        const changeStateLogicResult = changeStateLogic(
-          thisComponent,
-          thisItemValue,
-          thisChild,
-        );
-        if (!changeStateLogicResult?.canContinueRecursion) return;
-  
-        recursiveChangeStateChildComponent(
-          thisComponent,
-          thisItemValue,
-          thisChild,
-        );
-      });
-    }, 0);
+    thisParameterChild.childNodes.forEach((thisChild) => {
+      const changeStateLogicResult = changeStateLogic(
+        thisComponent,
+        thisItemValue,
+        thisChild,
+      );
+      if (!changeStateLogicResult?.canContinueRecursion) return;
+
+      recursiveChangeStateChildComponent(
+        thisComponent,
+        thisItemValue,
+        thisChild,
+      );
+    });
   }
 
   /**
@@ -172,10 +162,12 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     if (isScript) return;
 
     const isText = thisParameterChild instanceof Text;
+
     if (isText) {
       const isTextEmpty =
         (thisParameterChild.textContent || "").replace("\n", "").trim() === "";
       if (isTextEmpty) return;
+      // console.log(thisParameterChild);
 
       thisParameterChild.textContent = (
         thisParameterChild.textContent || ""
@@ -187,9 +179,10 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       return;
     }
 
+    const regexIsComponent = /\<[^\/]*-[^\>]*\>/g;
     const hasComponentNested =
-      !!(thisParameterChild.innerHTML.match(/\<[^\/]*-[^\>]*\>/g));
-    
+      !!thisParameterChild.innerHTML.match(regexIsComponent);
+
     if (hasComponentNested) {
       return {
         canContinueRecursion: true,
@@ -198,7 +191,27 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
 
     const isChildComponent = thisParameterChild.nodeName.includes("-");
     if (isChildComponent) {
-      thisParameterChild.stateVariables[forAttributes.thisItem] = thisItemValue;
+      // const thisScript = thisParameterChild.querySelector("script");
+
+      // const codeToAppend = `
+      //   let ${forAttributes.thisItem} = ${thisItemValue};
+      // `;
+
+      // thisScript.textContent = thisScript.textContent.replace(
+      //   "(()=>{",
+      //   `(()=>{
+      //   ${codeToAppend}`,
+      // );
+      // return;
+
+      const codeToAppend = `
+        let ${forAttributes.thisItem} = ${thisItemValue};
+      `;
+
+      const thisScript = document.createElement("script");
+      thisScript.textContent = codeToAppend;
+      thisParameterChild.appendChild(thisScript);
+      
       return;
     }
 
