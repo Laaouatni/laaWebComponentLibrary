@@ -1,6 +1,24 @@
 // /* created by Laaouatni - https://github.com/Laaouatni/ */
 
 document.querySelectorAll("template").forEach((thisTemplateElement) => {
+  class ThisComponent extends HTMLElement {
+    /**
+     *
+     * @type {{[variableName:string]: any}}
+     */
+    state = {};
+    _connectedCallback() { };
+    connectedCallback() {
+      this._connectedCallback();
+      console.log(this)
+    }
+    _disconnectedCallback() { };
+    disconnectedCallback() { 
+      this._disconnectedCallback();
+    };
+  };
+
+  customElements.define(thisTemplateElement.id, ThisComponent)
 });
 
 
