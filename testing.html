@@ -13,14 +13,13 @@
 </head>
 
 <body class="grid gap-8 p-2">
-  <laa-example>
-    <laa-example>
-      <script>
-        console.log("b", thisComponent)
-      </script>
-    </laa-example>
-  </laa-example>
-  <laa-for class="grid outline" arrayItems="arrayTest" thisItem="thisItem">
+  <laa-parent>
+    <laa-child></laa-child>
+  </laa-parent>
+  <!-- <laa-example>
+    <laa-example class="nested"></laa-example>
+  </laa-example> -->
+  <!-- <laa-for class="grid outline" arrayItems="arrayTest" thisItem="thisItem">
     text: {thisItem}
     <div>div: {thisItem}</div><br>
     <div>
@@ -66,7 +65,7 @@
       </div>
     </div>
     fuori: {thisItem}
-  </laa-for>
+  </laa-for> -->
 
   <template id="laa-for">
     <slot></slot>
@@ -76,13 +75,40 @@
     <slot></slot>
   </template> -->
 
+  <template id="laa-parent">
+    parent: {a} <slot></slot>
+    <script>
+      let a = 0;
+      thisComponent.addEventListener('click', (e) => {
+        a++;
+        console.log(thisComponent.stateVariables);
+      });
+    </script>
+  </template>
+
+  <template id="laa-child">
+    child: {b}
+    <script>
+      let b = 0;
+      thisComponent.addEventListener('click', () => {
+        b++;
+        console.log(thisComponent.stateVariables);
+      });
+    </script>
+  </template>
+
   <template id="laa-another-example">
     laa-another-example: {thisItem}
     <slot></slot>
   </template>
 
-  <template id="laa-example" class="{(a)%2?'bg-green-500':'bg-red-500'} text-3xl">
-    laaExample: <slot></slot> {thisItem} and a is: {a}
+  <!-- <template id="laa-example" class="{(a)%2?'bg-green-500':'bg-red-500'} text-3xl">
+    <div>laaExample: 
+      <div>
+        <slot></slot>
+      </div> 
+      {thisItem} and a is: {a}
+    </div>
     <script>
       let a = 0;
       thisComponent.addEventListener('click', () => {
@@ -90,7 +116,7 @@
         console.log(thisComponent.stateVariables);
       });
     </script>
-  </template>
+  </template> -->
 </body>
 
 </html>

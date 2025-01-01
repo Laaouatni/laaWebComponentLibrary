@@ -190,19 +190,21 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     }
 
     const isChildComponent = thisParameterChild.nodeName.includes("-");
-
     if (isChildComponent) {
-      const codeToAppend = `
-        let ${forAttributes.thisItem} = ${thisItemValue};
-      `;
-
-      let thisScript = thisParameterChild.querySelector("script");
-
-      thisScript = document.createElement("script");
-      thisScript.textContent = codeToAppend;
-      // console.log(thisScript, thisParameterChild.innerHTML);
-      // thisParameterChild.appendChild(thisScript);
+      return;
     }
+    // if (isChildComponent) {
+    //   const codeToAppend = `
+    //     let ${forAttributes.thisItem} = ${thisItemValue};
+    //   `;
+
+    //   let thisScript = thisParameterChild.querySelector("script");
+
+    //   thisScript = document.createElement("script");
+    //   thisScript.textContent = codeToAppend;
+    //   console.log(thisScript, thisParameterChild.innerHTML);
+    //   thisParameterChild.appendChild(thisScript);
+    // }
 
     thisParameterChild.innerHTML = (
       thisParameterChild.innerHTML || ""
@@ -330,6 +332,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
           /\{|\}/g,
           "",
         );
+        console.log(variableName)
         const variableValue = thisComponent.stateVariables[variableName];
         const isFunctionVariable = typeof variableValue == "function";
         const variableValueToReturn = isFunctionVariable
@@ -450,8 +453,10 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
    */
   function isolateScriptStringInsideComponent(thisScriptString) {
     return `(()=>{
+              if(!document.currentScript) return;
               const thisComponent = document.currentScript.parentElement;
-              ${thisScriptString}}
-            )()`;
+              ${thisScriptString}
+              ;console.log(thisComponent.stateVariables)
+            })()`;
   }
 });
