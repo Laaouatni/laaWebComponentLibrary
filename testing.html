@@ -15,7 +15,12 @@
 <body class="grid gap-8 p-2">
 
   <laa-for class="grid outline" arrayItems="arrayTest" thisItem="thisItem">
+    text: {thisItem}
     <div>div: {thisItem}</div><br>
+    <div>
+      <div>div: {thisItem}</div>
+      text: {thisItem}
+    </div>
     <laa-example class="{a>3?'outline':'outline-none'}">{thisItem}</laa-example><br>
     <div>div: {thisItem}</div><br>
     <span>span: {thisItem}</span><br>

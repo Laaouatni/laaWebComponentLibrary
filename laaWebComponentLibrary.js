@@ -105,13 +105,19 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
 
     const arrayItemsValues = eval(forAttributes.arrayItems ?? "[]");
 
-    thisComponent.childNodes.forEach((thisChild) => {
-      recursiveChangeStateChildComponent(
-        thisComponent,
-        999,
-        thisChild,
-      );
-    });
+    recursiveChangeStateChildComponent(
+      thisComponent,
+      999,
+      thisComponent,
+    );
+
+    // thisComponent.childNodes.forEach((thisChild) => {
+    //   recursiveChangeStateChildComponent(
+    //     thisComponent,
+    //     999,
+    //     thisChild,
+    //   );
+    // });
 
     setTimeout(() => {
       arrayItemsValues.forEach((thisItemValue) => {
@@ -135,7 +141,7 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
         const changeStateLogicResult = changeStateLogic(
           thisComponent,
           thisItemValue,
-          thisParameterChild,
+          thisChild,
         );
         if (!changeStateLogicResult?.canContinueRecursion) return;
   
@@ -163,7 +169,6 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     if (isScript) return;
 
     const isText = thisParameterChild instanceof Text;
-    console.log(thisParameterChild);
     if (isText) {
       const isTextEmpty =
         (thisParameterChild.textContent || "").replace("\n", "").trim() === "";
