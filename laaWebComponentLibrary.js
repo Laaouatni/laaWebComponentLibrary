@@ -180,31 +180,26 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
       return;
     }
 
+    
     const hasComponentNested =
-      !!thisParameterChild.innerHTML.match(/\<[^\/]*-[^\>]*\>/g);
-
-    if (!hasComponentNested) {
-      const isChildComponent = thisParameterChild.nodeName.includes("-");
-
-      if (isChildComponent) {
-        thisParameterChild.stateVariables[forAttributes.thisItem] =
-          thisItemValue;
-        return;
-      }
-
-      thisParameterChild.innerHTML = (
-        thisParameterChild.innerHTML || ""
-      ).replaceAll(
-        new RegExp(`{${forAttributes.thisItem}}`, "g"),
-        thisItemValue,
-      );
-
-      return;
+    !!thisParameterChild.innerHTML.match(/\<[^\/]*-[^\>]*\>/g);
+    
+    if (hasComponentNested) {
+      return {
+        canContinueRecursion: true,
+      };
     }
 
-    return {
-      canContinueRecursion: true,
-    };
+    const isChildComponent = thisParameterChild.nodeName.includes("-");
+    if (isChildComponent) {
+      thisParameterChild.stateVariables[forAttributes.thisItem] = thisItemValue;
+      return;
+    }
+    console.log(thisParameterChild);
+
+    thisParameterChild.innerHTML = (
+      thisParameterChild.innerHTML || ""
+    ).replaceAll(new RegExp(`{${forAttributes.thisItem}}`, "g"), thisItemValue);
   }
 
   /**

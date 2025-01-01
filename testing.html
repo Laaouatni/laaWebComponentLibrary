@@ -8,13 +8,13 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="./laaWebComponentLibrary.js"></script>
   <script>
-    let arrayTest = [1, 2, 3];
+    let arrayTest = [4];
   </script>
 </head>
 
 <body class="grid gap-8 p-2">
 
-  <laa-for class="grid" arrayItems="arrayTest" thisItem="thisItem">
+  <laa-for class="grid outline" arrayItems="arrayTest" thisItem="thisItem">
     <div>div: {thisItem}</div><br>
     <laa-example class="{a>3?'outline':'outline-none'}">{thisItem}</laa-example><br>
     <div>div: {thisItem}</div><br>
@@ -51,16 +51,17 @@
   </template> -->
 
   <template id="laa-another-example">
-    laa-another-example:
+    laa-another-example: {thisItem}
     <slot></slot>
   </template>
 
   <template id="laa-example" class="{(a)%2?'bg-green-500':'bg-red-500'} text-3xl">
-    laaExample: <slot></slot> and a is: {a}
+    laaExample: <slot></slot> {thisItem} and a is: {a}
     <script>
       let a = 0;
       thisComponent.addEventListener('click', () => {
         a++;
+        console.log(thisComponent.stateVariables);
       });
     </script>
   </template>
