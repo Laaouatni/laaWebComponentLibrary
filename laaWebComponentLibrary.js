@@ -190,29 +190,22 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     }
 
     const isChildComponent = thisParameterChild.nodeName.includes("-");
+    
     if (isChildComponent) {
-      // const thisScript = thisParameterChild.querySelector("script");
-
-      // const codeToAppend = `
-      //   let ${forAttributes.thisItem} = ${thisItemValue};
-      // `;
-
-      // thisScript.textContent = thisScript.textContent.replace(
-      //   "(()=>{",
-      //   `(()=>{
-      //   ${codeToAppend}`,
-      // );
-      // return;
-
       const codeToAppend = `
         let ${forAttributes.thisItem} = ${thisItemValue};
       `;
 
-      const thisScript = document.createElement("script");
-      thisScript.textContent = codeToAppend;
-      thisParameterChild.appendChild(thisScript);
-      
-      return;
+      let thisScript = thisParameterChild.querySelector("script");
+
+      console.log("thisScript", thisScript);
+
+      if (!thisScript) {
+        thisScript = document.createElement("script");
+        thisScript.textContent = codeToAppend;
+        thisParameterChild.appendChild(thisScript);
+        return;
+      }
     }
 
     thisParameterChild.innerHTML = (
