@@ -150,6 +150,17 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
     };
 
     thisParameterChild.childNodes.forEach((thisChild) => {
+      const changeStateLogicResult = changeStateLogic(thisChild);
+      if (!changeStateLogicResult?.continue) return;
+
+      recursiveChangeStateChildComponent(
+        thisComponent,
+        thisItemValue,
+        thisChild,
+      );
+    });
+
+    function changeStateLogic(thisChild) {
       const isScript = thisChild instanceof HTMLScriptElement;
       if (isScript) return;
 
@@ -181,12 +192,10 @@ document.querySelectorAll("template").forEach((thisTemplateElement) => {
         return;
       }
 
-      recursiveChangeStateChildComponent(
-        thisComponent,
-        thisItemValue,
-        thisChild,
-      );
-    });
+      return {
+        continue: true,
+      };
+    }
   }
 
   /**

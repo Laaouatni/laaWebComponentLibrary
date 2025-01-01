@@ -8,17 +8,20 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="./laaWebComponentLibrary.js"></script>
   <script>
-    let arrayTest = [1];
+    let arrayTest = [1, 2, 3];
   </script>
 </head>
 
 <body class="grid gap-8 p-2">
 
   <laa-for class="grid" arrayItems="arrayTest" thisItem="thisItem">
+    <div>div: {thisItem}</div>
     <laa-example class="{a>3?'outline':'outline-none'}">{thisItem}</laa-example>
     <div>div: {thisItem}</div>
     <span>span: {thisItem}</span>
+    <laa-example>{thisItem}</laa-example>
     <div>
+      <laa-example>{thisItem}</laa-example>
       <laa-another-example>
         {thisItem}
         <div>
