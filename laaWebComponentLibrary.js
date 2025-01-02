@@ -28,7 +28,7 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
       copyTemplateToComponentShadowRoot(this);
       copyTemplateScriptToComponent(this);
 
-      console.log(getHtmlElementArrayStructure(this))
+      console.log(getHtmlElementArrayStructure(this));
     }
     _disconnectedCallback() {}
     disconnectedCallback() {
@@ -85,9 +85,13 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
 });
 
 /**
+ * @typedef {{parent: HTMLElement, childs?: (ChildNode | HTMLElement | TypeHtmlElementStructure)[] }} TypeHtmlElementStructure
+ */
+
+/**
  *
  * @param {HTMLElement} paramHtmlElement
- * @returns
+ * @returns {TypeHtmlElementStructure}
  */
 function getHtmlElementArrayStructure(paramHtmlElement) {
   return recursiveRemoveUnwantedItems(paramHtmlElement);
@@ -95,22 +99,27 @@ function getHtmlElementArrayStructure(paramHtmlElement) {
   /**
    *
    * @param {HTMLElement} paramHtmlElement
-   * @returns
+   * @returns {TypeHtmlElementStructure}
    */
   function recursiveRemoveUnwantedItems(paramHtmlElement) {
+    const parentElementWithUnwantedItems =
+      removeUnwantedItems(paramHtmlElement);
+    if (parentElementWithUnwantedItems.length == 0)
+      return { parent: paramHtmlElement };
+
     return {
       parent: paramHtmlElement,
-      childs: removeUnwantedItems(paramHtmlElement).map((thisElement) => {
+      childs: parentElementWithUnwantedItems.map((thisElement) => {
         if (thisElement.childNodes.length == 0) return thisElement;
         return recursiveRemoveUnwantedItems(thisElement);
-      })
+      }),
     };
   }
 
   /**
    *
    * @param {HTMLElement} paramHtmlElement
-   * @returns
+   * @returns {ChildNode[]}
    */
   function removeUnwantedItems(paramHtmlElement) {
     return [...paramHtmlElement.childNodes].filter((thisChildNode) => {
