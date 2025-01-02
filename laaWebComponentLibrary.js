@@ -27,6 +27,7 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
       this.state = new Proxy(this.state, {
         set: (parent, child, val, receiver) => {
           updateUIwithNewStateValues(this);
+          console.log(getHtmlElementArrayStructure(this))
           return Reflect.set(parent, child, val, receiver);
         },
       });
@@ -83,7 +84,7 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
    * @param {ThisComponent} thisComponent
    */
   function updateUIwithNewStateValues(thisComponent) {
-    console.log(thisComponent, getHtmlElementArrayStructure(thisComponent));
+    // console.log(thisComponent, getHtmlElementArrayStructure(thisComponent));
     // console.log(thisComponent.templateWithoutScript);
   }
 
