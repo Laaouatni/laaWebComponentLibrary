@@ -36,15 +36,13 @@
 
   <template id="laa-parent">
     parent: {a} <slot></slot>
-    <script>
-      let a = 10;
-    </script>
+    <script>console.log(document.currentScript.parentElement)</script>
   </template>
 
   <template id="laa-child">
     child: {b} <slot></slot>
     <script>
-      let b = 5;
+      // let b = 5;
     </script>
   </template>
 </body>

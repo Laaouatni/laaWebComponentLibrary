@@ -3,7 +3,7 @@
 document.querySelectorAll("template").forEach((thisTemplate) => {
   thisTemplate.content.querySelectorAll("script").forEach((thisScript) => {
     thisScript.noModule = true;
-  })
+  });
 
   class ThisComponent extends HTMLElement {
     /**
@@ -15,7 +15,8 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
     _connectedCallback() {}
     connectedCallback() {
       this._connectedCallback();
-      copyTemplateToComponent(this);
+      copyTemplateToComponentShadowRoot(this);
+      copyTemplateScriptToComponent(this);
     }
     _disconnectedCallback() {}
     disconnectedCallback() {
@@ -29,17 +30,44 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
    *
    * @param {ThisComponent} thisComponent
    */
-  function copyTemplateToComponent(thisComponent) {
+  function copyTemplateScriptToComponent(thisComponent) {
+    const elements = {
+      templateScripts: thisTemplate.content.querySelectorAll("script"),
+      component: thisComponent,
+      newScript: document.createElement("script"),
+    };
+
+    elements.templateScripts.forEach((thisTemplateScript) => {
+      elements.newScript.textContent += thisTemplateScript.textContent;
+    });
+
+    elements.component.appendChild(elements.newScript);
+  }
+
+  /**
+   *
+   * @param {ThisComponent} thisComponent
+   */
+  function copyTemplateToComponentShadowRoot(thisComponent) {
     const elements = {
       template: thisTemplate.content.cloneNode(true),
-      component: thisComponent.shadowRoot,
+      componentShadowRoot: thisComponent.shadowRoot,
     };
-    elements.component.appendChild(elements.template);
+    elements.template.querySelectorAll("script").forEach(
+      /**
+       *
+       * @param {HTMLScriptElement} thisScript
+       */
+      (thisScript) => {
+        thisScript.remove();
+      },
+    );
+    elements.componentShadowRoot.appendChild(elements.template);
   }
 });
 
 const bodyStructure = getHtmlElementArrayStructure(document.body);
-console.log(bodyStructure)
+console.log(bodyStructure);
 
 /**
  *
