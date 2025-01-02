@@ -10,17 +10,16 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
     shadowRoot = this.attachShadow({ mode: "open" });
     _connectedCallback() {}
     connectedCallback() {
-      performance.mark("start")
       this._connectedCallback();
       copyTemplateToComponent(this);
-      performance.mark("end");
-      console.log(performance.measure("result", "start", "end").duration)
     }
     _disconnectedCallback() {}
     disconnectedCallback() {
       this._disconnectedCallback();
     }
   }
+
+  customElements.define(thisTemplate.id, ThisComponent);
 
   /**
    *
@@ -29,15 +28,48 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
   function copyTemplateToComponent(thisComponent) {
     const elements = {
       template: thisTemplate.content.cloneNode(true),
-      component: thisComponent.shadowRoot
+      component: thisComponent.shadowRoot,
     };
     elements.component.appendChild(elements.template);
-  };
-
-  customElements.define(thisTemplate.id, ThisComponent);
+  }
 });
 
-console.log(document.body)
+function getHtmlBodyStructureObject() {
+  const bodyWithoutUnwantedItems = removeUnwantedItems(document.body);
+
+  return bodyWithoutUnwantedItems;
+
+  /**
+   *
+   * @param {HTMLElement} paramHtmlElement
+   * @returns
+   */
+  function removeUnwantedItems(paramHtmlElement) {
+    return [...paramHtmlElement.childNodes].filter((thisChildNode) => {
+      const conditions = {
+        text: {
+          isText: thisChildNode instanceof Text,
+          isEmpty:
+            (thisChildNode.textContent || "")
+              .replaceAll("\n", "")
+              .replaceAll(" ", "") == "",
+        },
+        isComment:  thisChildNode instanceof Comment,
+        isScript:   thisChildNode instanceof HTMLScriptElement,
+        isTemplate: thisChildNode instanceof HTMLTemplateElement,
+      };
+
+      const isUnwantedItem =
+        (conditions.text.isText && conditions.text.isEmpty) ||
+        conditions.isComment ||
+        conditions.isScript;
+
+      if (!isUnwantedItem) return thisChildNode;
+    });
+  }
+}
+
+console.log(getHtmlBodyStructureObject());
 
 // document.querySelectorAll("template").forEach((thisTemplateElement) => {
 //   const STATE_OBJECT_POSITION_PREFIX_STRING = "thisComponent.stateVariables.";
