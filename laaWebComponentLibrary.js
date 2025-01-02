@@ -34,6 +34,8 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
   }
 });
 
+console.log(getHtmlBodyStructureObject());
+
 function getHtmlBodyStructureObject() {
   const bodyWithoutUnwantedItems = removeUnwantedItems(document.body);
 
@@ -62,14 +64,13 @@ function getHtmlBodyStructureObject() {
       const isUnwantedItem =
         (conditions.text.isText && conditions.text.isEmpty) ||
         conditions.isComment ||
-        conditions.isScript;
+        conditions.isScript || 
+        conditions.isTemplate;
 
       if (!isUnwantedItem) return thisChildNode;
     });
   }
 }
-
-console.log(getHtmlBodyStructureObject());
 
 // document.querySelectorAll("template").forEach((thisTemplateElement) => {
 //   const STATE_OBJECT_POSITION_PREFIX_STRING = "thisComponent.stateVariables.";
