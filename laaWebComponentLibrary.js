@@ -34,10 +34,15 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
   }
 });
 
-console.log(getHtmlBodyStructureObject());
+
+console.log("💫", getHtmlBodyStructureObject());
 
 function getHtmlBodyStructureObject() {
   const bodyWithoutUnwantedItems = removeUnwantedItems(document.body);
+
+  bodyWithoutUnwantedItems.forEach((thisElement) => {
+    console.log(thisElement)
+  })
 
   return bodyWithoutUnwantedItems;
 
