@@ -10,17 +10,7 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
      *
      * @type {{[variableName:string]: any}}
      */
-    state = new Proxy(
-      {},
-      {
-        set: (parent, child, val) => {
-          parent[child] = val;
-          updateUIwithNewStateValues(this);
-          // console.log(this, parent);
-          return true;
-        },
-      },
-    );
+    state = {};
 
     shadowRoot = this.attachShadow({ mode: "open" });
 
@@ -33,6 +23,14 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
     _connectedCallback() {}
     connectedCallback() {
       this._connectedCallback();
+
+      this.state = new Proxy(this.state, {
+        set: (parent, child, val, receiver) => {
+          updateUIwithNewStateValues(this);
+          return Reflect.set(parent, child, val, receiver);
+        },
+      });
+
       copyTemplateToComponentShadowRoot(this);
       copyTemplateScriptToComponent(this);
     }
@@ -85,7 +83,7 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
    * @param {ThisComponent} thisComponent
    */
   function updateUIwithNewStateValues(thisComponent) {
-    console.log(getHtmlElementArrayStructure(thisComponent))
+    console.log(thisComponent, getHtmlElementArrayStructure(thisComponent));
     // console.log(thisComponent.templateWithoutScript);
   }
 
