@@ -21,13 +21,14 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
       this.state = new Proxy(this.state, {
         set: (parent, child, val, receiver) => {
           updateUIwithNewStateValues(this);
-          console.log({ this: this }, getHtmlElementArrayStructure(this));
           return Reflect.set(parent, child, val, receiver);
         },
       });
 
       copyTemplateToComponentShadowRoot(this);
       copyTemplateScriptToComponent(this);
+
+      console.log(getHtmlElementArrayStructure(this))
     }
     _disconnectedCallback() {}
     disconnectedCallback() {
@@ -79,15 +80,9 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
    * @param {ThisComponent} thisComponent
    */
   function updateUIwithNewStateValues(thisComponent) {
-    // console.log(thisComponent, getHtmlElementArrayStructure(thisComponent));
-    // console.log(thisComponent.templateWithoutScript);
+    // console.log(thisComponent,);
   }
-
-  // thisTemplate.remove();
 });
-
-// const bodyStructure = getHtmlElementArrayStructure(document.body);
-// console.log(bodyStructure);
 
 /**
  *
@@ -103,11 +98,13 @@ function getHtmlElementArrayStructure(paramHtmlElement) {
    * @returns
    */
   function recursiveRemoveUnwantedItems(paramHtmlElement) {
-    return removeUnwantedItems(paramHtmlElement).map((thisElement) => {
-      if (thisElement.childNodes.length == 0) return thisElement;
-      // console.log("💫", thisElement.childNodes)
-      return recursiveRemoveUnwantedItems(thisElement);
-    });
+    return {
+      parent: paramHtmlElement,
+      childs: removeUnwantedItems(paramHtmlElement).map((thisElement) => {
+        if (thisElement.childNodes.length == 0) return thisElement;
+        return recursiveRemoveUnwantedItems(thisElement);
+      })
+    };
   }
 
   /**
@@ -129,10 +126,6 @@ function getHtmlElementArrayStructure(paramHtmlElement) {
         isScript: thisChildNode instanceof HTMLScriptElement,
         isTemplate: thisChildNode instanceof HTMLTemplateElement,
       };
-
-      // console.log(
-      //   {thisChildNode, conditions}
-      // )
 
       const isUnwantedItem =
         (conditions.text.isText && conditions.text.isEmpty) ||
