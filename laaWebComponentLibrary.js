@@ -14,12 +14,6 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
 
     shadowRoot = this.attachShadow({ mode: "open" });
 
-    /**
-     *
-     * @type {DocumentFragment | Node}
-     */
-    templateWithoutScript;
-
     _connectedCallback() {}
     connectedCallback() {
       this._connectedCallback();
@@ -66,8 +60,9 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
    * @param {ThisComponent} thisComponent
    */
   function copyTemplateToComponentShadowRoot(thisComponent) {
-    thisComponent.templateWithoutScript = thisTemplate.content.cloneNode(true);
-    thisComponent.templateWithoutScript.querySelectorAll("script").forEach(
+    const templateWithoutScript = thisTemplate.content.cloneNode(true);
+
+    templateWithoutScript.querySelectorAll("script").forEach(
       /**
        *
        * @param {HTMLScriptElement} thisScript
@@ -76,9 +71,7 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
         thisScript.remove();
       },
     );
-    thisComponent.shadowRoot.appendChild(
-      thisComponent.templateWithoutScript.cloneNode(true),
-    );
+    thisComponent.shadowRoot.appendChild(templateWithoutScript);
   }
 
   /**
