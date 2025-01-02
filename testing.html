@@ -51,6 +51,14 @@
   <template id="laa-child">
     child: {b} <slot></slot>
     <script>
+      (() => { 
+        let thisComponent = document.currentScript.parentElement;
+        thisComponent.state['b'] = 1;
+        thisComponent.addEventListener('click', (e) => {
+          e.stopPropagation();
+          thisComponent.state['b'] = thisComponent.state['b'] + 1;
+        });
+      })();
     </script>
   </template>
 </body>
