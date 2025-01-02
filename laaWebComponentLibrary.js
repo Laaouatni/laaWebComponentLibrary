@@ -34,20 +34,26 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
   }
 });
 
-console.log("💫", getHtmlBodyStructureObject());
+const bodyStructure = getHtmlElementArrayStructure(document.body);
+console.log(bodyStructure)
 
-function getHtmlBodyStructureObject() {
-  return recursiveRemoveUnwantedItems(document.body);
+/**
+ *
+ * @param {HTMLElement} paramHtmlElement
+ * @returns
+ */
+function getHtmlElementArrayStructure(paramHtmlElement) {
+  return recursiveRemoveUnwantedItems(paramHtmlElement);
 
   /**
-   * 
-   * @param {HTMLElement} paramHtmlElement 
-   * @returns 
+   *
+   * @param {HTMLElement} paramHtmlElement
+   * @returns
    */
   function recursiveRemoveUnwantedItems(paramHtmlElement) {
     return removeUnwantedItems(paramHtmlElement).map((thisElement) => {
       if (thisElement.childNodes.length == 0) return thisElement;
-      return recursiveRemoveUnwantedItems(thisElement)
+      return recursiveRemoveUnwantedItems(thisElement);
     });
   }
 
