@@ -20,15 +20,17 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
 
       this.state = new Proxy(this.state, {
         set: (parent, child, val, receiver) => {
+          const successfullSet = Reflect.set(parent, child, val, receiver);
+          if (!successfullSet) return false;
+
           updateUIwithNewStateValues(this);
-          return Reflect.set(parent, child, val, receiver);
+          
+          return true;
         },
       });
 
       copyTemplateToComponentShadowRoot(this);
       copyTemplateScriptToComponent(this);
-
-      console.log(getHtmlElementArrayStructure(this));
     }
     _disconnectedCallback() {}
     disconnectedCallback() {
@@ -80,7 +82,7 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
    * @param {ThisComponent} thisComponent
    */
   function updateUIwithNewStateValues(thisComponent) {
-    // console.log(thisComponent,);
+    console.log(thisComponent.state);
   }
 });
 
