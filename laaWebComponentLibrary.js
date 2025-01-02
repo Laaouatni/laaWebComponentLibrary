@@ -10,14 +10,26 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
      *
      * @type {{[variableName:string]: any}}
      */
-    state = new Proxy({}, {
-      set: (parent, child, val) => {
-        parent[child] = val;
-        console.log(this, parent);
-        return true
-      }
-    });
+    state = new Proxy(
+      {},
+      {
+        set: (parent, child, val) => {
+          parent[child] = val;
+          updateUIwithNewStateValues(this);
+          // console.log(this, parent);
+          return true;
+        },
+      },
+    );
+
     shadowRoot = this.attachShadow({ mode: "open" });
+
+    /**
+     *
+     * @type {DocumentFragment | Node}
+     */
+    templateWithoutScript;
+
     _connectedCallback() {}
     connectedCallback() {
       this._connectedCallback();
@@ -55,11 +67,8 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
    * @param {ThisComponent} thisComponent
    */
   function copyTemplateToComponentShadowRoot(thisComponent) {
-    const elements = {
-      template: thisTemplate.content.cloneNode(true),
-      componentShadowRoot: thisComponent.shadowRoot,
-    };
-    elements.template.querySelectorAll("script").forEach(
+    thisComponent.templateWithoutScript = thisTemplate.content.cloneNode(true);
+    thisComponent.templateWithoutScript.querySelectorAll("script").forEach(
       /**
        *
        * @param {HTMLScriptElement} thisScript
@@ -68,12 +77,23 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
         thisScript.remove();
       },
     );
-    elements.componentShadowRoot.appendChild(elements.template);
+    thisComponent.shadowRoot.appendChild(thisComponent.templateWithoutScript);
   }
+
+  /**
+   *
+   * @param {ThisComponent} thisComponent
+   */
+  function updateUIwithNewStateValues(thisComponent) {
+    console.log(getHtmlElementArrayStructure(thisComponent))
+    // console.log(thisComponent.templateWithoutScript);
+  }
+
+  // thisTemplate.remove();
 });
 
-const bodyStructure = getHtmlElementArrayStructure(document.body);
-console.log(bodyStructure);
+// const bodyStructure = getHtmlElementArrayStructure(document.body);
+// console.log(bodyStructure);
 
 /**
  *
