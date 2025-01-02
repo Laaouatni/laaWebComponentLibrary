@@ -34,15 +34,16 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
   }
 });
 
-
 console.log("💫", getHtmlBodyStructureObject());
 
 function getHtmlBodyStructureObject() {
   const bodyWithoutUnwantedItems = removeUnwantedItems(document.body);
 
   bodyWithoutUnwantedItems.forEach((thisElement) => {
-    console.log(thisElement)
-  })
+    if (thisElement.childNodes.length == 0) return;
+
+    removeUnwantedItems(thisElement);
+  });
 
   return bodyWithoutUnwantedItems;
 
@@ -61,15 +62,15 @@ function getHtmlBodyStructureObject() {
               .replaceAll("\n", "")
               .replaceAll(" ", "") == "",
         },
-        isComment:  thisChildNode instanceof Comment,
-        isScript:   thisChildNode instanceof HTMLScriptElement,
+        isComment: thisChildNode instanceof Comment,
+        isScript: thisChildNode instanceof HTMLScriptElement,
         isTemplate: thisChildNode instanceof HTMLTemplateElement,
       };
 
       const isUnwantedItem =
         (conditions.text.isText && conditions.text.isEmpty) ||
         conditions.isComment ||
-        conditions.isScript || 
+        conditions.isScript ||
         conditions.isTemplate;
 
       if (!isUnwantedItem) return thisChildNode;
