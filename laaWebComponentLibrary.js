@@ -1,6 +1,10 @@
 // /* created by Laaouatni - https://github.com/Laaouatni/ */
 
 document.querySelectorAll("template").forEach((thisTemplate) => {
+  thisTemplate.content.querySelectorAll("script").forEach((thisScript) => {
+    thisScript.noModule = true;
+  })
+
   class ThisComponent extends HTMLElement {
     /**
      *
