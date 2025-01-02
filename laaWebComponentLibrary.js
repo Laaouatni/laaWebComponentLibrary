@@ -7,6 +7,7 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
      * @type {{[variableName:string]: any}}
      */
     state = {};
+    shadowRoot = this.attachShadow({ mode: "open" });
     _connectedCallback() {}
     connectedCallback() {
       this._connectedCallback();
@@ -25,7 +26,7 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
   function copyTemplateToComponent(thisComponent) {
     const elements = {
       template: thisTemplate.content.cloneNode(true),
-      component: thisComponent
+      component: thisComponent.shadowRoot
     };
 
     elements.component.appendChild(elements.template);
