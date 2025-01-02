@@ -13,8 +13,15 @@
 </head>
 
 <body class="grid gap-8 p-2">
-  <laa-parent>
-    <laa-child></laa-child>
+  <laa-parent class="ml-4 grid">
+    <laa-child class="ml-4 grid">
+      <laa-parent class="ml-4 grid">
+        <laa-child class="ml-4 grid"></laa-child>
+        <laa-child class="ml-4 grid"></laa-child>
+      </laa-parent>
+    </laa-child>
+    <laa-child class="ml-4 grid"></laa-child>
+    <laa-child class="ml-4 grid"></laa-child>
   </laa-parent>
 
   <template id="laa-for">
@@ -27,23 +34,15 @@
 
   <template id="laa-parent">
     parent: {a} <slot></slot>
-    <script>
-      let a = 0;
-      thisComponent.addEventListener('click', (e) => {
-        a++;
-        console.log(thisComponent.stateVariables);
-      });
+    <script nomodule>
+      let a = 10;
     </script>
   </template>
 
   <template id="laa-child">
     child: {b}
-    <script>
-      let b = 0;
-      thisComponent.addEventListener('click', () => {
-        b++;
-        console.log(thisComponent.stateVariables);
-      });
+    <script nomodule>
+      let b = 5;
     </script>
   </template>
 </body>

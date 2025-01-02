@@ -1,26 +1,38 @@
 // /* created by Laaouatni - https://github.com/Laaouatni/ */
 
-document.querySelectorAll("template").forEach((thisTemplateElement) => {
+document.querySelectorAll("template").forEach((thisTemplate) => {
   class ThisComponent extends HTMLElement {
     /**
      *
      * @type {{[variableName:string]: any}}
      */
     state = {};
-    _connectedCallback() { };
+    _connectedCallback() {}
     connectedCallback() {
       this._connectedCallback();
-      console.log(this)
+      copyTemplateToComponent(this);
     }
-    _disconnectedCallback() { };
-    disconnectedCallback() { 
+    _disconnectedCallback() {}
+    disconnectedCallback() {
       this._disconnectedCallback();
+    }
+  }
+
+  /**
+   *
+   * @param {ThisComponent} thisComponent
+   */
+  function copyTemplateToComponent(thisComponent) {
+    const elements = {
+      template: thisTemplate.content.cloneNode(true),
+      component: thisComponent
     };
-  };
 
-  customElements.define(thisTemplateElement.id, ThisComponent)
+    elements.component.appendChild(elements.template);
+  }
+
+  customElements.define(thisTemplate.id, ThisComponent);
 });
-
 
 // document.querySelectorAll("template").forEach((thisTemplateElement) => {
 //   const STATE_OBJECT_POSITION_PREFIX_STRING = "thisComponent.stateVariables.";
