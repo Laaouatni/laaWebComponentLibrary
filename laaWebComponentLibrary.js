@@ -37,10 +37,19 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
 console.log("💫", getHtmlBodyStructureObject());
 
 function getHtmlBodyStructureObject() {
-  return removeUnwantedItems(document.body).map((thisElement) => {
-    if (thisElement.childNodes.length == 0) return thisElement;
-    return removeUnwantedItems(thisElement);
-  });
+  return recursiveRemoveUnwantedItems(document.body);
+
+  /**
+   * 
+   * @param {HTMLElement} paramHtmlElement 
+   * @returns 
+   */
+  function recursiveRemoveUnwantedItems(paramHtmlElement) {
+    return removeUnwantedItems(paramHtmlElement).map((thisElement) => {
+      if (thisElement.childNodes.length == 0) return thisElement;
+      return recursiveRemoveUnwantedItems(thisElement)
+    });
+  }
 
   /**
    *
