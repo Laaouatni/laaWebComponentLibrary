@@ -37,14 +37,20 @@
   <template id="laa-parent">
     parent: {a} <slot></slot>
     <script>
-    console.log(document.currentScript.parentElement.state)
+      (() => { 
+        let thisComponent = document.currentScript.parentElement;
+        thisComponent.state['a'] = 1;
+        thisComponent.addEventListener('click', (e) => {
+          e.stopPropagation();
+          thisComponent.state['a'] = thisComponent.state['a'] + 1;
+        });
+      })();
     </script>
   </template>
 
   <template id="laa-child">
     child: {b} <slot></slot>
     <script>
-      // let b = 5;
     </script>
   </template>
 </body>

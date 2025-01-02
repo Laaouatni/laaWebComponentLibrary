@@ -13,6 +13,7 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
     state = new Proxy({}, {
       set: (parent, child, val) => {
         parent[child] = val;
+        console.log(this, parent);
         return true
       }
     });
