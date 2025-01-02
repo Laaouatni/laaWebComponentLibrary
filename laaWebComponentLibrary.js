@@ -10,8 +10,11 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
     shadowRoot = this.attachShadow({ mode: "open" });
     _connectedCallback() {}
     connectedCallback() {
+      performance.mark("start")
       this._connectedCallback();
       copyTemplateToComponent(this);
+      performance.mark("end");
+      console.log(performance.measure("result", "start", "end").duration)
     }
     _disconnectedCallback() {}
     disconnectedCallback() {
@@ -28,12 +31,13 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
       template: thisTemplate.content.cloneNode(true),
       component: thisComponent.shadowRoot
     };
-
     elements.component.appendChild(elements.template);
-  }
+  };
 
   customElements.define(thisTemplate.id, ThisComponent);
 });
+
+console.log(document.body)
 
 // document.querySelectorAll("template").forEach((thisTemplateElement) => {
 //   const STATE_OBJECT_POSITION_PREFIX_STRING = "thisComponent.stateVariables.";
