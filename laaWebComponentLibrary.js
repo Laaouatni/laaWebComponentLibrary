@@ -10,7 +10,12 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
      *
      * @type {{[variableName:string]: any}}
      */
-    state = {};
+    state = new Proxy({}, {
+      set: (parent, child, val) => {
+        parent[child] = val;
+        return true
+      }
+    });
     shadowRoot = this.attachShadow({ mode: "open" });
     _connectedCallback() {}
     connectedCallback() {

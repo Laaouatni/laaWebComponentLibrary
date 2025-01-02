@@ -36,7 +36,9 @@
 
   <template id="laa-parent">
     parent: {a} <slot></slot>
-    <script>console.log(document.currentScript.parentElement)</script>
+    <script>
+    console.log(document.currentScript.parentElement.state)
+    </script>
   </template>
 
   <template id="laa-child">
