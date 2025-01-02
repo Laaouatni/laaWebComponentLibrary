@@ -27,7 +27,7 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
       this.state = new Proxy(this.state, {
         set: (parent, child, val, receiver) => {
           updateUIwithNewStateValues(this);
-          console.log(getHtmlElementArrayStructure(this))
+          console.log({ this: this }, getHtmlElementArrayStructure(this));
           return Reflect.set(parent, child, val, receiver);
         },
       });
@@ -48,17 +48,17 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
    * @param {ThisComponent} thisComponent
    */
   function copyTemplateScriptToComponent(thisComponent) {
-    const elements = {
-      templateScripts: thisTemplate.content.querySelectorAll("script"),
-      component: thisComponent,
-      newScript: document.createElement("script"),
-    };
+    const templateScripts = thisTemplate.content.querySelectorAll("script");
+    if (templateScripts.length == 0) return;
 
-    elements.templateScripts.forEach((thisTemplateScript) => {
-      elements.newScript.textContent += thisTemplateScript.textContent;
+    const generatedScript = document.createElement("script");
+
+    templateScripts.forEach((thisTemplateScript) => {
+      if (thisTemplateScript.textContent == "") return;
+      generatedScript.textContent += thisTemplateScript.textContent;
     });
 
-    elements.component.appendChild(elements.newScript);
+    thisComponent.appendChild(generatedScript);
   }
 
   /**
@@ -76,7 +76,9 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
         thisScript.remove();
       },
     );
-    thisComponent.shadowRoot.appendChild(thisComponent.templateWithoutScript);
+    thisComponent.shadowRoot.appendChild(
+      thisComponent.templateWithoutScript.cloneNode(true),
+    );
   }
 
   /**
@@ -110,6 +112,7 @@ function getHtmlElementArrayStructure(paramHtmlElement) {
   function recursiveRemoveUnwantedItems(paramHtmlElement) {
     return removeUnwantedItems(paramHtmlElement).map((thisElement) => {
       if (thisElement.childNodes.length == 0) return thisElement;
+      // console.log("💫", thisElement.childNodes)
       return recursiveRemoveUnwantedItems(thisElement);
     });
   }
@@ -134,13 +137,17 @@ function getHtmlElementArrayStructure(paramHtmlElement) {
         isTemplate: thisChildNode instanceof HTMLTemplateElement,
       };
 
+      // console.log(
+      //   {thisChildNode, conditions}
+      // )
+
       const isUnwantedItem =
         (conditions.text.isText && conditions.text.isEmpty) ||
         conditions.isComment ||
         conditions.isScript ||
         conditions.isTemplate;
 
-      if (!isUnwantedItem) return thisChildNode;
+      return !isUnwantedItem;
     });
   }
 }
