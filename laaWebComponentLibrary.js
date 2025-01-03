@@ -200,6 +200,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 class laaState {
   constructor(initialStateObject = {}) {
+    /**
+     * @type {{[variableName:string]: ((thisNewValue:any) => void)[]}}
+     */
     this.userListeners = {};
 
     this.state = new Proxy(initialStateObject, {
@@ -213,11 +216,19 @@ class laaState {
         );
         if (!successfullSet) return false;
 
-        (() => {
+        console.log(this.userListeners);
+
+        ;(() => {
           if (thisPreviousValue === thisNewValue) return;
-          this.userListeners[property]?.forEach((callback) => {
-            callback(thisNewValue);
-          });
+          this.userListeners[property]?.forEach(
+            /**
+             *
+             * @param {(thisNewValue:any) => void} callback
+             */
+            (callback) => {
+              callback(thisNewValue);
+            },
+          );
         })();
 
         return successfullSet;

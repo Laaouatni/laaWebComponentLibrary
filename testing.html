@@ -16,6 +16,7 @@
     myState.listenToVariableChange('d', (value) => {
       console.log('d changed and its value is:', value);
     });
+
     myState.state.d++;
     myState.state.d = 100;
     myState.state.d = 100;
@@ -41,27 +42,6 @@
     })
 
     myAnotherState.state.c++;
-
-    // Object.entries(documentState).forEach(([key, value]) => {
-    //   Object.defineProperty(documentState, key, {
-    //     get: () => {
-    //       return value;
-    //     },
-    //     set: (thisSetValue) => {
-    //       value = thisSetValue;
-    //       const thisChangeEvent = new CustomEvent(`stateChange-${key}`, {
-    //         detail: thisSetValue
-    //       });
-    //       document.dispatchEvent(thisChangeEvent);
-    //     }
-    //   });
-    // });
-
-    // console.log('documentState', documentState);
-
-    // document.addEventListener(`stateChange-d`, (e) => {
-    //   console.log(e.detail);
-    // });
   </script>
 </head>
 
