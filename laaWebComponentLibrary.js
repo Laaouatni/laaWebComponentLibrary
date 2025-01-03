@@ -104,13 +104,12 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
     [...thisTemplate.attributes].forEach((thisTemplateAttribute) => {
       if (!thisTemplateAttribute.nodeValue) return;
 
-      let canIgnoreAttribute = false;
-      let canMergeAttribute = true;
+      const canIgnoreAttribute = notWantedAttributes.some(
+        (thisUnwantedAttribute) => {
+          return thisTemplateAttribute.nodeName == thisUnwantedAttribute;
+        },
+      );
 
-      notWantedAttributes.forEach((thisUnwantedAttribute) => {
-        if (thisTemplateAttribute.nodeName == thisUnwantedAttribute)
-          canIgnoreAttribute = true;
-      });
       if (canIgnoreAttribute) return;
 
       const hasAlreadyAttribute = !!thisComponent.getAttribute(
@@ -118,17 +117,16 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
       );
 
       if (hasAlreadyAttribute) {
-        notMergableAttributes.forEach((thisNotMergableAttribute) => {
-          if (thisTemplateAttribute.nodeName == thisNotMergableAttribute)
-            canMergeAttribute = false;
-        });
+        const canMergeAttribute = !notMergableAttributes.some(
+          (thisNotMergableAttribute) => {
+            return thisTemplateAttribute.nodeName == thisNotMergableAttribute;
+          },
+        );
 
         if (canMergeAttribute) {
           thisComponent.setAttribute(
             thisTemplateAttribute.nodeName,
-            `${thisComponent.getAttribute(thisTemplateAttribute.nodeName)} ${
-              thisTemplateAttribute.nodeValue
-            }`,
+            `${thisComponent.getAttribute(thisTemplateAttribute.nodeName)} ${thisTemplateAttribute.nodeValue}`,
           );
 
           return;
@@ -140,8 +138,6 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
         thisTemplateAttribute.nodeValue,
       );
     });
-
-    // console.log(thisTemplate.attributes[0].nodeName)
   }
 });
 
