@@ -8,7 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="./laaWebComponentLibrary.js"></script>
   <script>
-    let testArray = [1,2,3,4];
+    let testArray = [1,25,3,99, 5, 5];
     const globalState = new laaState({ d: 99 });
   </script>
 </head>
@@ -19,7 +19,7 @@
   </laa-for>
 
   <template id="laa-for">
-    <slot name="{thisIndex}"></slot>
+    <slot></slot>
   </template>
 
   <template id="laa-parent" class="{thisComponent.state.a>3?'bg-green-500':'bg-slate-500'}">

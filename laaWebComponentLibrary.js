@@ -24,7 +24,19 @@ document.addEventListener("DOMContentLoaded", () => {
         (() => {
           const isForLoop = this.nodeName == "laa-for".toUpperCase();
           if (!isForLoop) return;
-          
+
+          const thisArrayName = this.getAttribute("thisArray") || "";
+          const thisValueName = this.getAttribute("thisValue") || "";
+          const thisIndexName = this.getAttribute("thisIndex") || "";
+
+          const evaluatedArrayValue = eval(thisArrayName);
+          const isArray = Array.isArray(evaluatedArrayValue);
+
+          if (!isArray) throw new Error(`"${thisArrayName}" is not an array`);
+
+          evaluatedArrayValue.forEach((thisArrayItem, thisArrayIndex) => {
+            console.log(thisArrayItem, thisArrayIndex);
+          });
         })();
 
         this.state = new Proxy(this.state, {
@@ -207,7 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
 class laaState {
   constructor(initialStateObject = {}) {
     /**
-     * 
+     *
      * @type {{[variableName:string]: ((thisNewValue:any) => void)[]}}
      */
     this.userListeners = {};
