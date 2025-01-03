@@ -50,7 +50,20 @@ document.addEventListener("DOMContentLoaded", () => {
           console.log(evaluatedArrayValue, thisArrayName, thisValueName, thisIndexName);
 
           evaluatedArrayValue.forEach((thisArrayItem, thisArrayIndex) => {
+            /**
+             * @type {ThisComponent}
+             */
             const laaForChild = document.createElement("laa-for-child");
+            laaForChild.state[thisValueName] = thisArrayItem;
+            laaForChild.state[thisIndexName] = thisArrayIndex;
+            console.log(laaForChild.state);
+
+            console.log(laaForChild.state);
+
+            // this.childNodes.forEach((thisChildNode) => {
+              
+            //   laaForChild.appendChild(thisChildNode);
+            // });
 
             this.shadowRoot.appendChild(laaForChild);
           });
