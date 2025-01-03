@@ -18,11 +18,32 @@
 
     class laaState {
       constructor(initialStateObject = {}) {
-        this.state = initialStateObject;
+        this.userListeners = {};
+
+        this.state = new Proxy(initialStateObject, {
+          set: (parent, child, val, receiver) => {
+            const successfullSet = Reflect.set(parent, child, val, receiver);
+            if (!successfullSet) return false;
+
+            console.log(this.userListeners)
+
+            return successfullSet;
+          }
+        });
       };
+
+      listenToVariableChange(variableToListen, callback) {
+        if(!this.userListeners[variableToListen]) {
+          this.userListeners[variableToListen] = [];
+        }
+
+        console.log(variableToListen, callback);
+
+        this.userListeners[variableToListen].push(callback);
+      }
     };
 
-    const myState = new laaState({d: 99});
+    const myState = new laaState({ d: 99 });
 
     myState.state.d++;
 
@@ -33,6 +54,14 @@
     document.addEventListener("click", () => {
       myState.state.d--;
     })
+
+    myState.listenToVariableChange('d', (value) => {
+      console.log('another:', value);
+    });
+
+    myState.listenToVariableChange('c', (value) => {
+      console.log('another:', value);
+    });
 
     // Object.entries(documentState).forEach(([key, value]) => {
     //   Object.defineProperty(documentState, key, {
@@ -58,9 +87,9 @@
 </head>
 
 <body class="grid gap-8 p-2">
-  <laa-parent class="ml-4 grid border border-black rounded p-1">
+  <!-- <laa-parent class="ml-4 grid border border-black rounded p-1">
 
-  </laa-parent>
+  </laa-parent> -->
 
   ciao
 
@@ -74,20 +103,20 @@
     </div>
     <slot></slot>
     <script>
-      (() => {
-        let thisComponent = document.currentScript.parentElement;
+        (() => {
+          let thisComponent = document.currentScript.parentElement;
 
-        thisComponent.state['a'] = 0;
-        thisComponent.state['b'] = 0;
-        thisComponent.state['c'] = () => thisComponent.state['a'] + thisComponent.state['b'] + documentState.d;
+          thisComponent.state['a'] = 0;
+          thisComponent.state['b'] = 0;
+          thisComponent.state['c'] = () => thisComponent.state['a'] + thisComponent.state['b'] + documentState.d;
 
-        thisComponent.addEventListener('click', (e) => {
-          e.stopPropagation();
-          thisComponent.state['a']++
-          documentState.d--;
-          documentState.e++;
-        });
-      })();
+          thisComponent.addEventListener('click', (e) => {
+            e.stopPropagation();
+            thisComponent.state['a']++
+            documentState.d--;
+            documentState.e++;
+          });
+        })();
     </script>
   </template>
 
