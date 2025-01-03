@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
             slotElement.setAttribute("name", `${thisArrayIndex}`);
             slotElement.setAttribute("thisIndex", `${thisArrayIndex}`);
 
-            this.appendChild(slotElement);
+            this.shadowRoot.appendChild(slotElement);
             console.log(thisArrayItem, thisArrayIndex);
           });
         })();
