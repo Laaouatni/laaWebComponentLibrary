@@ -16,9 +16,11 @@
 <body class="grid gap-8 p-2">
   <laa-for thisArray="testArray" thisValue="thisValue" thisIndex="thisIndex" class="grid gap-4">
     <div class="outline rounded-lg">
-      <laa-parent class="p-2"></laa-parent>
+      <laa-parent class="p-2">
+      </laa-parent>
+      <div>thisValue: <span data-var="thisComponent.state.thisValue"></span></div>
       <div class="p-2">
-        <div>thisValue: <span data-var="thisComponent.state['4']"></span></div>
+        <div>thisValue: <span data-var="thisComponent.state.thisIndex"></span></div>
       </div>
     </div>
     <laa-a class="p-2"></laa-a>

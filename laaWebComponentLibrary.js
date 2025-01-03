@@ -19,6 +19,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       previousCloneNode;
 
+      constructor() {
+        super();
+      }
+
       _connectedCallback() {}
       connectedCallback() {
         this._connectedCallback();
@@ -29,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!successfullSet) return false;
             updateUIwithNewStateValues(this);
             updateAttributesWithNewStateValues(this);
-            // console.log(this,this.state);
+            console.log(this.state);
             return successfullSet;
           },
         });
@@ -45,19 +49,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     class LaaFor extends ThisComponent {
+      constructor() {
+        super();
+      }
+
       connectedCallback() {
         super.connectedCallback();
-        
+
         const thisArrayName = this.getAttribute("thisArray") || "";
         const thisValueName = this.getAttribute("thisValue") || "";
         const thisIndexName = this.getAttribute("thisIndex") || "";
-        
+
         const evaluatedArrayValue = eval(thisArrayName);
         const isArray = Array.isArray(evaluatedArrayValue);
-        
+
         if (!isArray) throw new Error(`"${thisArrayName}" is not an array`);
 
         evaluatedArrayValue.forEach((thisArrayValue, thisIndex) => {
+          /**
+           * @type {LaaForChild}
+           */
           const childComponent = document.createElement("laa-for-child");
           childComponent.setAttribute("slot", "childs");
           this.childNodes.forEach((thisChildNode) => {
@@ -66,6 +77,11 @@ document.addEventListener("DOMContentLoaded", () => {
             childComponent.appendChild(thisChildNodeClone);
           });
           this.appendChild(childComponent);
+          setTimeout(() => {
+            childComponent.state[thisValueName] = thisArrayValue;
+            childComponent.state[thisIndexName] = thisIndex;
+            childComponent.state["thisArray"] = evaluatedArrayValue;
+          }, 0);
         });
       }
     }
