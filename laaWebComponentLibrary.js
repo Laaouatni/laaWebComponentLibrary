@@ -155,11 +155,14 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
 
       const hasAtLeastOneVariable =
         !!thisComponentAttribute.nodeValue.match(/\{[^\}]*\}/g);
-      
-      if (!hasAtLeastOneVariable && thisComponent.previousAttributes[thisComponentAttribute.nodeName]) {
+
+      if (
+        !hasAtLeastOneVariable &&
+        thisComponent.previousAttributes[thisComponentAttribute.nodeName]
+      ) {
         thisComponent.setAttribute(
           thisComponentAttribute.nodeName,
-          thisComponent.previousAttributes[thisComponentAttribute.nodeName]
+          thisComponent.previousAttributes[thisComponentAttribute.nodeName],
         );
       }
 
@@ -175,9 +178,10 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
               );
             return eval(thisVariableExpression);
           },
-        );
+      );
 
-      thisComponent.previousAttributes[thisComponentAttribute.nodeName] = thisComponentAttribute.nodeValue;
+      thisComponent.previousAttributes[thisComponentAttribute.nodeName] =
+        thisComponentAttribute.nodeValue;
 
       thisComponent.setAttribute(
         thisComponentAttribute.nodeName,
