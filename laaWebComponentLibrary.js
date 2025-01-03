@@ -83,19 +83,14 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
    * @param {ThisComponent} thisComponent
    */
   function updateUIwithNewStateValues(thisComponent) {
-    const thisInnerHTML = {
-      slot: thisComponent.innerHTML,
-      template: thisComponent.shadowRoot.innerHTML
-    }
-    // const templateWithUpdatedValue = `${thisInnerHTML.template}`.replaceAll(/\{[^}]*\}/g, (thisVariableNameWithBrackets) => {
-    //   const thisVariableName = thisVariableNameWithBrackets.replace(/\{|\}/g, "");
-    //   return thisComponent.state[thisVariableName];
-    // });
+    Object.entries(thisComponent.state).forEach(([key, value]) => {
+      const variableHtmlElementsToChange = thisComponent.shadowRoot.querySelectorAll(`[data-var=${key}]`);
+      if (variableHtmlElementsToChange.length == 0) return;
 
-    // console.log(thisTemplate)
-
-    // thisComponent.shadowRoot.innerHTML = templateWithUpdatedValue;
-    // console.log(templateWithUpdatedValue, thisComponent.shadowRoot.innerHTML)
+      variableHtmlElementsToChange.forEach((thisVariableElement) => {
+        thisVariableElement.textContent = value
+      })
+    })
   };
 });
 
