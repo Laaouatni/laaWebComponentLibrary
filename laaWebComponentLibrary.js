@@ -17,6 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       previousAttributes = {};
 
+      previousCloneNode;
+
       _connectedCallback() {}
       connectedCallback() {
         this._connectedCallback();
@@ -34,18 +36,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
           if (!isArray) throw new Error(`"${thisArrayName}" is not an array`);
 
+          (() => {
+            if (this.previousCloneNode) return;
+            this.previousCloneNode = this.cloneNode(true);
+          })();
+
           evaluatedArrayValue.forEach((thisArrayItem, thisArrayIndex) => {
             const slotElement = document.createElement("slot");
 
             slotElement.setAttribute("thisArray", `${evaluatedArrayValue}`);
             slotElement.setAttribute("thisValue", `${thisArrayItem}`);
-            slotElement.setAttribute("name", `${thisArrayIndex}`);
+            slotElement.setAttribute("name",      `${thisArrayIndex}`);
             slotElement.setAttribute("thisIndex", `${thisArrayIndex}`);
 
             this.shadowRoot.appendChild(slotElement);
-
-            const slotElementsToAdd = this.cloneNode(true).childNodes;
-            slotElementsToAdd.forEach((thisSlotElement) => {
+            
+            this.previousCloneNode.cloneNode(true).childNodes.forEach((thisSlotElement) => {
               if (thisSlotElement instanceof Text) return;
               thisSlotElement.setAttribute("slot", `${thisArrayIndex}`);
               this.appendChild(thisSlotElement);
