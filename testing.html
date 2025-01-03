@@ -15,13 +15,12 @@
 
 <body class="grid gap-8 p-2">
 
-  <laa-for thisArray="testArray" thisValue="thisValue" thisIndex="thisIndex">
-    <laa-parent></laa-parent>
-    <div>
-      <laa-parent>ciao</laa-parent>
-    </div>
-    <div>
-      <div>hello</div>
+  <laa-for thisArray="testArray" thisValue="thisValue" thisIndex="thisIndex" class="grid gap-4">
+    <div class="outline rounded-lg">
+      <laa-parent class="p-2"></laa-parent>
+      <div class="p-2">
+        <div>hello</div>
+      </div>
     </div>
   </laa-for>
 
@@ -56,22 +55,6 @@
           e.stopPropagation();
           thisComponent.state['a']++
           globalState.state.d++;
-        });
-      })();
-    </script>
-  </template>
-
-  <template id="laa-child" class="bg-orange-500">
-    ciao sono la var c: <span data-var="c"></span>,
-    <slot></slot>
-    <script>
-      (() => {
-        let thisComponent = document.currentScript.parentElement;
-        thisComponent.state['c'] = 1;
-        thisComponent.state["tw"] = "p-8";
-        thisComponent.addEventListener('click', (e) => {
-          e.stopPropagation();
-          thisComponent.state['c'] = thisComponent.state['c'] + 1;
         });
       })();
     </script>
