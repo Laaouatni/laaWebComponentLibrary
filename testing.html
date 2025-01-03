@@ -10,32 +10,50 @@
   <script>
     let arrayTest = [4];
 
-    let documentState = {
-      d: 99,
-      e: 58,
-      f: 33
+    // let documentState = {
+    //   d: 99,
+    //   e: 58,
+    //   f: 33
+    // };
+
+    class laaState {
+      constructor(initialStateObject = {}) {
+        this.state = initialStateObject;
+      };
     };
 
-    Object.entries(documentState).forEach(([key, value]) => {
-      Object.defineProperty(documentState, key, {
-        get: () => {
-          return value;
-        },
-        set: (thisSetValue) => {
-          value = thisSetValue;
-          const thisChangeEvent = new CustomEvent(`stateChange-${key}`, {
-            detail: thisSetValue
-          });
-          document.dispatchEvent(thisChangeEvent);
-        }
-      });
+    const myState = new laaState({d: 99});
+
+    myState.state.d++;
+
+    myState.listenToVariableChange('d', (value) => {
+      console.log('d changed and its value is:', value);
     });
 
-    console.log('documentState', documentState);
+    document.addEventListener("click", () => {
+      myState.state.d--;
+    })
 
-    document.addEventListener(`stateChange-d`, (e) => {
-      console.log(e.detail);
-    });
+    // Object.entries(documentState).forEach(([key, value]) => {
+    //   Object.defineProperty(documentState, key, {
+    //     get: () => {
+    //       return value;
+    //     },
+    //     set: (thisSetValue) => {
+    //       value = thisSetValue;
+    //       const thisChangeEvent = new CustomEvent(`stateChange-${key}`, {
+    //         detail: thisSetValue
+    //       });
+    //       document.dispatchEvent(thisChangeEvent);
+    //     }
+    //   });
+    // });
+
+    // console.log('documentState', documentState);
+
+    // document.addEventListener(`stateChange-d`, (e) => {
+    //   console.log(e.detail);
+    // });
   </script>
 </head>
 
