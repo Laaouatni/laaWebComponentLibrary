@@ -6,40 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script defer src="./laaWebComponentLibrary.js"></script>
+  <script src="./laaWebComponentLibrary.js"></script>
   <script>
     let arrayTest = [4];
-
-    class laaState {
-      constructor(initialStateObject = {}) {
-        this.userListeners = {};
-
-        this.state = new Proxy(initialStateObject, {
-          set: (parent, property, thisNewValue, receiver) => {
-            const thisPreviousValue = parent[property];
-            const successfullSet = Reflect.set(parent, property, thisNewValue, receiver);
-            if (!successfullSet) return false;
-
-            (() => {
-              if(thisPreviousValue === thisNewValue) return;
-              this.userListeners[property]?.forEach((callback) => {
-                callback(thisNewValue);
-              });
-            })();
-
-            return successfullSet;
-          }
-        });
-      };
-
-      listenToVariableChange(variableToListen, callback) {
-        if (!this.userListeners[variableToListen]) {
-          this.userListeners[variableToListen] = [];
-        }
-
-        this.userListeners[variableToListen].push(callback);
-      }
-    };
 
     const myState = new laaState({ d: 99, c: 30 });
     const myAnotherState = new laaState({ d: 50, c: 0 });

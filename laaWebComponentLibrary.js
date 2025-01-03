@@ -1,200 +1,238 @@
 // /* created by Laaouatni - https://github.com/Laaouatni/ */
 
-document.querySelectorAll("template").forEach((thisTemplate) => {
-  thisTemplate.content.querySelectorAll("script").forEach((thisScript) => {
-    thisScript.noModule = true;
-  });
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("template").forEach((thisTemplate) => {
+    thisTemplate.content.querySelectorAll("script").forEach((thisScript) => {
+      thisScript.noModule = true;
+    });
 
-  class ThisComponent extends HTMLElement {
-    /**
-     *
-     * @type {{[variableName:string]: any}}
-     */
-    state = {};
-
-    shadowRoot = this.attachShadow({ mode: "open" });
-
-    previousAttributes = {};
-
-    _connectedCallback() {}
-    connectedCallback() {
-      this._connectedCallback();
-
-      this.state = new Proxy(this.state, {
-        set: (parent, child, val, receiver) => {
-          const successfullSet = Reflect.set(parent, child, val, receiver);
-          if (!successfullSet) return false;
-          updateUIwithNewStateValues(this);
-          updateAttributesWithNewStateValues(this);
-          return successfullSet;
-        },
-      });
-
-      copyTemplateToComponentShadowRoot(this);
-      copyTemplateAttributesToComponent(this);
-      copyTemplateScriptToComponent(this);
-    };
-    _disconnectedCallback() {}
-    disconnectedCallback() {
-      this._disconnectedCallback();
-    }
-  }
-
-  customElements.define(thisTemplate.id, ThisComponent);
-
-  /**
-   *
-   * @param {ThisComponent} thisComponent
-   */
-  function copyTemplateToComponentShadowRoot(thisComponent) {
-    const templateWithoutScript = thisTemplate.content.cloneNode(true);
-
-    templateWithoutScript.querySelectorAll("script").forEach(
+    class ThisComponent extends HTMLElement {
       /**
        *
-       * @param {HTMLScriptElement} thisScript
+       * @type {{[variableName:string]: any}}
        */
-      (thisScript) => {
-        thisScript.remove();
-      },
-    );
+      state = {};
 
-    thisComponent.shadowRoot.appendChild(templateWithoutScript);
-  }
+      shadowRoot = this.attachShadow({ mode: "open" });
 
-  /**
-   *
-   * @param {ThisComponent} thisComponent
-   */
-  function copyTemplateAttributesToComponent(thisComponent) {
-    const notWantedAttributes = ["id"];
-    const notMergableAttributes = [];
+      previousAttributes = {};
 
-    [...thisTemplate.attributes].forEach((thisTemplateAttribute) => {
-      if (!thisTemplateAttribute.nodeValue) return;
+      _connectedCallback() {}
+      connectedCallback() {
+        this._connectedCallback();
 
-      const canIgnoreAttribute = notWantedAttributes.some(
-        (thisUnwantedAttribute) => {
-          return thisTemplateAttribute.nodeName == thisUnwantedAttribute;
+        this.state = new Proxy(this.state, {
+          set: (parent, child, val, receiver) => {
+            const successfullSet = Reflect.set(parent, child, val, receiver);
+            if (!successfullSet) return false;
+            updateUIwithNewStateValues(this);
+            updateAttributesWithNewStateValues(this);
+            return successfullSet;
+          },
+        });
+
+        copyTemplateToComponentShadowRoot(this);
+        copyTemplateAttributesToComponent(this);
+        copyTemplateScriptToComponent(this);
+      }
+      _disconnectedCallback() {}
+      disconnectedCallback() {
+        this._disconnectedCallback();
+      }
+    }
+
+    customElements.define(thisTemplate.id, ThisComponent);
+
+    /**
+     *
+     * @param {ThisComponent} thisComponent
+     */
+    function copyTemplateToComponentShadowRoot(thisComponent) {
+      const templateWithoutScript = thisTemplate.content.cloneNode(true);
+
+      templateWithoutScript.querySelectorAll("script").forEach(
+        /**
+         *
+         * @param {HTMLScriptElement} thisScript
+         */
+        (thisScript) => {
+          thisScript.remove();
         },
       );
 
-      if (canIgnoreAttribute) return;
+      thisComponent.shadowRoot.appendChild(templateWithoutScript);
+    }
 
-      const hasAlreadyAttribute = !!thisComponent.getAttribute(
-        thisTemplateAttribute.nodeName,
-      );
+    /**
+     *
+     * @param {ThisComponent} thisComponent
+     */
+    function copyTemplateAttributesToComponent(thisComponent) {
+      const notWantedAttributes = ["id"];
+      const notMergableAttributes = [];
 
-      if (hasAlreadyAttribute) {
-        const canMergeAttribute = !notMergableAttributes.some(
-          (thisNotMergableAttribute) => {
-            return thisTemplateAttribute.nodeName == thisNotMergableAttribute;
+      [...thisTemplate.attributes].forEach((thisTemplateAttribute) => {
+        if (!thisTemplateAttribute.nodeValue) return;
+
+        const canIgnoreAttribute = notWantedAttributes.some(
+          (thisUnwantedAttribute) => {
+            return thisTemplateAttribute.nodeName == thisUnwantedAttribute;
           },
         );
 
-        if (canMergeAttribute) {
-          thisComponent.setAttribute(
-            thisTemplateAttribute.nodeName,
-            `${thisComponent.getAttribute(thisTemplateAttribute.nodeName)} ${
-              thisTemplateAttribute.nodeValue
-            }`,
+        if (canIgnoreAttribute) return;
+
+        const hasAlreadyAttribute = !!thisComponent.getAttribute(
+          thisTemplateAttribute.nodeName,
+        );
+
+        if (hasAlreadyAttribute) {
+          const canMergeAttribute = !notMergableAttributes.some(
+            (thisNotMergableAttribute) => {
+              return thisTemplateAttribute.nodeName == thisNotMergableAttribute;
+            },
           );
 
-          return;
+          if (canMergeAttribute) {
+            thisComponent.setAttribute(
+              thisTemplateAttribute.nodeName,
+              `${thisComponent.getAttribute(thisTemplateAttribute.nodeName)} ${
+                thisTemplateAttribute.nodeValue
+              }`,
+            );
+
+            return;
+          }
         }
-      }
 
-      thisComponent.setAttribute(
-        thisTemplateAttribute.nodeName,
-        thisTemplateAttribute.nodeValue,
-      );
-    });
-  }
+        thisComponent.setAttribute(
+          thisTemplateAttribute.nodeName,
+          thisTemplateAttribute.nodeValue,
+        );
+      });
+    }
 
-  /**
-   *
-   * @param {ThisComponent} thisComponent
-   */
-  function copyTemplateScriptToComponent(thisComponent) {
-    const templateScripts = thisTemplate.content.querySelectorAll("script");
-    if (templateScripts.length == 0) return;
+    /**
+     *
+     * @param {ThisComponent} thisComponent
+     */
+    function copyTemplateScriptToComponent(thisComponent) {
+      const templateScripts = thisTemplate.content.querySelectorAll("script");
+      if (templateScripts.length == 0) return;
 
-    const generatedScript = document.createElement("script");
+      const generatedScript = document.createElement("script");
 
-    templateScripts.forEach((thisTemplateScript) => {
-      if (thisTemplateScript.textContent == "") return;
-      generatedScript.textContent += thisTemplateScript.textContent;
-    });
+      templateScripts.forEach((thisTemplateScript) => {
+        if (thisTemplateScript.textContent == "") return;
+        generatedScript.textContent += thisTemplateScript.textContent;
+      });
 
-    thisComponent.appendChild(generatedScript);
-  }
+      thisComponent.appendChild(generatedScript);
+    }
 
-  /**
-   *
-   * @param {ThisComponent} thisComponent
-   */
-  function updateUIwithNewStateValues(thisComponent) {
-    const allVariableElementToChange =
-      thisComponent.shadowRoot.querySelectorAll("[data-var]");
+    /**
+     *
+     * @param {ThisComponent} thisComponent
+     */
+    function updateUIwithNewStateValues(thisComponent) {
+      const allVariableElementToChange =
+        thisComponent.shadowRoot.querySelectorAll("[data-var]");
 
-    allVariableElementToChange.forEach((thisVariableElement) => {
-      const variableName = thisVariableElement.getAttribute("data-var");
-      if (!variableName) return;
+      allVariableElementToChange.forEach((thisVariableElement) => {
+        const variableName = thisVariableElement.getAttribute("data-var");
+        if (!variableName) return;
 
-      const evaluatedValue = eval(variableName);
-      const isFunctionVariable = typeof evaluatedValue == "function";
+        const evaluatedValue = eval(variableName);
+        const isFunctionVariable = typeof evaluatedValue == "function";
 
-      thisVariableElement.textContent = isFunctionVariable
-        ? evaluatedValue()
-        : evaluatedValue;
-    });
-  }
+        thisVariableElement.textContent = isFunctionVariable
+          ? evaluatedValue()
+          : evaluatedValue;
+      });
+    }
 
-  /**
-   *
-   * @param {ThisComponent} thisComponent
-   */
-  function updateAttributesWithNewStateValues(thisComponent) {
-    [...thisComponent.attributes].forEach((thisComponentAttribute) => {
-      if (!thisComponentAttribute.nodeValue) return;
+    /**
+     *
+     * @param {ThisComponent} thisComponent
+     */
+    function updateAttributesWithNewStateValues(thisComponent) {
+      [...thisComponent.attributes].forEach((thisComponentAttribute) => {
+        if (!thisComponentAttribute.nodeValue) return;
 
-      const hasAtLeastOneVariable =
-        !!thisComponentAttribute.nodeValue.match(/\{[^\}]*\}/g);
+        const hasAtLeastOneVariable =
+          !!thisComponentAttribute.nodeValue.match(/\{[^\}]*\}/g);
 
-      if (
-        !hasAtLeastOneVariable &&
-        thisComponent.previousAttributes[thisComponentAttribute.nodeName]
-      ) {
+        if (
+          !hasAtLeastOneVariable &&
+          thisComponent.previousAttributes[thisComponentAttribute.nodeName]
+        ) {
+          thisComponent.setAttribute(
+            thisComponentAttribute.nodeName,
+            thisComponent.previousAttributes[thisComponentAttribute.nodeName],
+          );
+        }
+
+        const newEvaluatedValue = thisComponent
+          .getAttribute(thisComponentAttribute.nodeName)
+          ?.replaceAll(
+            /\{[^\}]*\}/g,
+            (thisVariableAttributeExpressionWithBrackets) => {
+              const thisVariableExpression =
+                thisVariableAttributeExpressionWithBrackets.replaceAll(
+                  /\{|\}/g,
+                  "",
+                );
+              return eval(thisVariableExpression);
+            },
+          );
+
+        thisComponent.previousAttributes[thisComponentAttribute.nodeName] =
+          thisComponentAttribute.nodeValue;
+
         thisComponent.setAttribute(
           thisComponentAttribute.nodeName,
-          thisComponent.previousAttributes[thisComponentAttribute.nodeName],
+          newEvaluatedValue || "",
         );
-      }
+      });
+    }
+  });
+});
 
-      const newEvaluatedValue = thisComponent
-        .getAttribute(thisComponentAttribute.nodeName)
-        ?.replaceAll(
-          /\{[^\}]*\}/g,
-          (thisVariableAttributeExpressionWithBrackets) => {
-            const thisVariableExpression =
-              thisVariableAttributeExpressionWithBrackets.replaceAll(
-                /\{|\}/g,
-                "",
-              );
-            return eval(thisVariableExpression);
-          },
+class laaState {
+  constructor(initialStateObject = {}) {
+    this.userListeners = {};
+
+    this.state = new Proxy(initialStateObject, {
+      set: (parent, property, thisNewValue, receiver) => {
+        const thisPreviousValue = parent[property];
+        const successfullSet = Reflect.set(
+          parent,
+          property,
+          thisNewValue,
+          receiver,
         );
+        if (!successfullSet) return false;
 
-      thisComponent.previousAttributes[thisComponentAttribute.nodeName] =
-        thisComponentAttribute.nodeValue;
+        (() => {
+          if (thisPreviousValue === thisNewValue) return;
+          this.userListeners[property]?.forEach((callback) => {
+            callback(thisNewValue);
+          });
+        })();
 
-      thisComponent.setAttribute(
-        thisComponentAttribute.nodeName,
-        newEvaluatedValue || "",
-      );
+        return successfullSet;
+      },
     });
   }
-});
+
+  listenToVariableChange(variableToListen, callback) {
+    if (!this.userListeners[variableToListen]) {
+      this.userListeners[variableToListen] = [];
+    }
+
+    this.userListeners[variableToListen].push(callback);
+  }
+}
 
 /**
  * @typedef {{parent: HTMLElement, childs?: (ChildNode | HTMLElement | TypeHtmlElementStructure)[] }} TypeHtmlElementStructure
