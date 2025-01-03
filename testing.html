@@ -14,8 +14,8 @@
 
 <body class="grid gap-8 p-2">
   <laa-parent class="ml-4 grid border border-black rounded p-1">
-    <laa-child class="ml-4 grid border border-black rounded p-1 {c>3?'bg-green-500':'bg-slate-500'}"></laa-child>
-    <laa-child class="ml-4 grid border border-black rounded p-1"></laa-child>
+    <laa-child class="ml-4 grid border {thisComponent.state.c>7?'border-purple-600':'border-yellow-400'} border-black rounded p-1 {thisComponent.state.c>3?'bg-green-500':'bg-slate-500'}"></laa-child>
+    <laa-child class="ml-4 grid border {thisComponent.state.tw} border-black rounded p-1"></laa-child>
     <laa-child class="ml-4 grid border border-black rounded p-1">
       <laa-parent class="ml-4 grid border border-black rounded p-1">
         <laa-child class="ml-4 grid border border-black rounded p-1"></laa-child>
@@ -30,7 +30,7 @@
 
   ciao
 
-  <template id="laa-parent" class="{a>3?'bg-green-500':'bg-slate-500'}">
+  <template id="laa-parent" class="{thisComponent.state.a>3?'bg-green-500':'bg-slate-500'}">
     ciao sono la var a: <div data-var="a"></div>,
     <slot></slot>
     <script>
@@ -52,6 +52,7 @@
       (() => { 
         let thisComponent = document.currentScript.parentElement;
         thisComponent.state['c'] = 1;
+        thisComponent.state["tw"] = "p-8";
         thisComponent.addEventListener('click', (e) => {
           e.stopPropagation();
           thisComponent.state['c'] = thisComponent.state['c'] + 1;

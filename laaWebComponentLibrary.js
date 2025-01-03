@@ -17,7 +17,7 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
     _connectedCallback() {}
     connectedCallback() {
       this._connectedCallback();
-
+      
       this.state = new Proxy(this.state, {
         set: (parent, child, val, receiver) => {
           const successfullSet = Reflect.set(parent, child, val, receiver);
@@ -27,7 +27,7 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
           return successfullSet;
         },
       });
-
+      
       copyTemplateToComponentShadowRoot(this);
       copyTemplateAttributesToComponent(this);
       copyTemplateScriptToComponent(this);
@@ -148,7 +148,26 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
    * @param {ThisComponent} thisComponent 
    */
   function updateAttributesWithNewStateValues(thisComponent) {
-    
+    [...thisComponent.attributes].forEach((thisComponentAttribute) => {
+      if (!thisComponentAttribute.nodeValue) return;
+
+      const hasAtLeastOneVariable = !!(thisComponentAttribute.nodeValue.match(/\{[^\}]*\}/g));
+      if (!hasAtLeastOneVariable) return;
+
+      const newEvaluatedValue = thisComponent.getAttribute(thisComponentAttribute.nodeName)?.replaceAll(/\{[^\}]*\}/g, (thisVariableAttributeExpressionWithBrackets) => {
+        // console.log(thisVariableAttributeExpressionWithBrackets)
+        const thisVariableExpression = thisVariableAttributeExpressionWithBrackets.replaceAll(/\{|\}/g, "");
+        // console.log(eval(`(() => ${thisVariableExpression})()`))
+        // console.log(thisVariableExpression, eval(thisVariableExpression))
+        return eval(thisVariableExpression);
+      })
+
+      console.log(newEvaluatedValue)
+      thisComponent.setAttribute(
+        "class",
+        (newEvaluatedValue || "")
+      )
+    });
   }
 });
 
