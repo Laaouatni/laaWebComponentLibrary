@@ -10,25 +10,31 @@
   <script>
     let arrayTest = [4];
 
+    let documentState = {
+      d: 99,
+      e: 58,
+      f: 33
+    };
 
-    const laaStateEventsTarget = new EventTarget();
-    
-    let d = new Proxy({ value: 99 }, {
-      set: (parent, child, val, receiver) => {
-        const thisChangeEvent = new CustomEvent('change', {
-          detail: {
-            parent: parent,
-            child: child,
-            value: val
-          }
-        });
-        laaStateEventsTarget.dispatchEvent(thisChangeEvent);
-        return Reflect.set(parent, child, val, receiver);
-      }
-    })
+    Object.entries(documentState).forEach(([key, value]) => {
+      Object.defineProperty(documentState, key, {
+        get: () => {
+          return value;
+        },
+        set: (thisSetValue) => {
+          value = thisSetValue;
+          const thisChangeEvent = new CustomEvent(`stateChange-${key}`, {
+            detail: thisSetValue
+          });
+          document.dispatchEvent(thisChangeEvent);
+        }
+      });
+    });
 
-    laaStateEventsTarget.addEventListener('change', (e) => {
-      console.log('change', e.detail);
+    console.log('documentState', documentState);
+
+    document.addEventListener(`stateChange-d`, (e) => {
+      console.log(e.detail);
     });
   </script>
 </head>
@@ -46,24 +52,24 @@
       + b: <span data-var="thisComponent.state.b"></span>
       = c: <span data-var="thisComponent.state.c"></span>
       ....
-      d: <span data-var="d.value"></span>
+      d: <span data-var="documentState.d"></span>
     </div>
     <slot></slot>
     <script>
-        (() => {
-          let thisComponent = document.currentScript.parentElement;
+      (() => {
+        let thisComponent = document.currentScript.parentElement;
 
-          thisComponent.state['a'] = 0;
-          thisComponent.state['b'] = 0;
-          thisComponent.state['c'] = () => thisComponent.state['a'] + thisComponent.state['b'] + d.value;
+        thisComponent.state['a'] = 0;
+        thisComponent.state['b'] = 0;
+        thisComponent.state['c'] = () => thisComponent.state['a'] + thisComponent.state['b'] + documentState.d;
 
-          thisComponent.addEventListener('click', (e) => {
-            e.stopPropagation();
-            thisComponent.state['a']++
-            d.value--;
-            d.value--;
-          });
-        })();
+        thisComponent.addEventListener('click', (e) => {
+          e.stopPropagation();
+          thisComponent.state['a']++
+          documentState.d--;
+          documentState.e++;
+        });
+      })();
     </script>
   </template>
 
