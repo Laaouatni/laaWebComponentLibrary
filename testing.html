@@ -9,6 +9,7 @@
   <script defer src="./laaWebComponentLibrary.js"></script>
   <script>
     let arrayTest = [4];
+    let d=99;
   </script>
 </head>
 
@@ -21,9 +22,11 @@
 
   <template id="laa-parent" class="{thisComponent.state.a>3?'bg-green-500':'bg-slate-500'}">
     <div>
-      a: <span data-var="a"></span>  
-      + b: <span data-var="b"></span>
-      = c: <span data-var="c"></span>
+      a: <span data-var="thisComponent.state.a"></span>  
+      + b: <span data-var="thisComponent.state.b"></span>
+      = c: <span data-var="thisComponent.state.c"></span>
+      ....
+      d: <span data-var="d"></span>
     </div>
     <slot></slot>
     <script>

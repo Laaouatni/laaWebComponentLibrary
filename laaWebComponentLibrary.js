@@ -134,14 +134,13 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
    * @param {ThisComponent} thisComponent
    */
   function updateUIwithNewStateValues(thisComponent) {
-    Object.entries(thisComponent.state).forEach(([key, value]) => {
-      const variableHtmlElementsToChange =
-        thisComponent.shadowRoot.querySelectorAll(`[data-var=${key}]`);
-      if (variableHtmlElementsToChange.length == 0) return;
+    const allVariableElementToChange =
+      thisComponent.shadowRoot.querySelectorAll("[data-var]");
+    console.log(allVariableElementToChange);
 
-      variableHtmlElementsToChange.forEach((thisVariableElement) => {
-        thisVariableElement.textContent = value;
-      });
+    allVariableElementToChange.forEach((thisVariableElement) => {
+      const variableName = thisVariableElement.getAttribute("data-var");
+      thisVariableElement.textContent = eval(variableName || "");
     });
   }
 
@@ -178,7 +177,7 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
               );
             return eval(thisVariableExpression);
           },
-      );
+        );
 
       thisComponent.previousAttributes[thisComponentAttribute.nodeName] =
         thisComponentAttribute.nodeValue;
