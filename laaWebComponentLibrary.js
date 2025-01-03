@@ -33,7 +33,7 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
       copyTemplateToComponentShadowRoot(this);
       copyTemplateAttributesToComponent(this);
       copyTemplateScriptToComponent(this);
-    }
+    };
     _disconnectedCallback() {}
     disconnectedCallback() {
       this._disconnectedCallback();

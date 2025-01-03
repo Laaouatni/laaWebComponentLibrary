@@ -9,7 +9,27 @@
   <script defer src="./laaWebComponentLibrary.js"></script>
   <script>
     let arrayTest = [4];
-    let d=99;
+
+
+    const laaStateEventsTarget = new EventTarget();
+    
+    let d = new Proxy({ value: 99 }, {
+      set: (parent, child, val, receiver) => {
+        const thisChangeEvent = new CustomEvent('change', {
+          detail: {
+            parent: parent,
+            child: child,
+            value: val
+          }
+        });
+        laaStateEventsTarget.dispatchEvent(thisChangeEvent);
+        return Reflect.set(parent, child, val, receiver);
+      }
+    })
+
+    laaStateEventsTarget.addEventListener('change', (e) => {
+      console.log('change', e.detail);
+    });
   </script>
 </head>
 
@@ -22,28 +42,28 @@
 
   <template id="laa-parent" class="{thisComponent.state.a>3?'bg-green-500':'bg-slate-500'}">
     <div>
-      a: <span data-var="thisComponent.state.a"></span>  
+      a: <span data-var="thisComponent.state.a"></span>
       + b: <span data-var="thisComponent.state.b"></span>
       = c: <span data-var="thisComponent.state.c"></span>
       ....
-      d: <span data-var="d"></span>
+      d: <span data-var="d.value"></span>
     </div>
     <slot></slot>
     <script>
-      (() => {
-        let thisComponent = document.currentScript.parentElement;
+        (() => {
+          let thisComponent = document.currentScript.parentElement;
 
-        thisComponent.state['a'] = 0;
-        thisComponent.state['b'] = 0;
-        thisComponent.state['c'] = () => thisComponent.state['a'] + thisComponent.state['b'] + d;
+          thisComponent.state['a'] = 0;
+          thisComponent.state['b'] = 0;
+          thisComponent.state['c'] = () => thisComponent.state['a'] + thisComponent.state['b'] + d.value;
 
-        thisComponent.addEventListener('click', (e) => {
-          e.stopPropagation();
-          thisComponent.state['a']++
-          d--;
-          d--;
-        });
-      })();
+          thisComponent.addEventListener('click', (e) => {
+            e.stopPropagation();
+            thisComponent.state['a']++
+            d.value--;
+            d.value--;
+          });
+        })();
     </script>
   </template>
 
