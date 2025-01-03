@@ -56,11 +56,6 @@ document.addEventListener("DOMContentLoaded", () => {
               thisSlotElement.setAttribute("slot", `${thisArrayIndex}`);
               this.appendChild(thisSlotElement);
             });
-
-            // this.appendChild(this.cloneNode(true));
-            // this.shadowRoot.appendChild(slotElement);
-            // addedSlotElementInShadowRoot.appendChild(this.cloneNode(true))
-            // console.log(thisArrayItem, thisArrayIndex);
           });
         })();
 
