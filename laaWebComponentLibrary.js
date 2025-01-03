@@ -24,6 +24,46 @@ document.addEventListener("DOMContentLoaded", () => {
         this._connectedCallback();
         console.log("connectedCallback");
 
+        // (() => {
+        //   const isForLoop = this.nodeName == "laa-for".toUpperCase();
+        //   if (!isForLoop) return;
+
+        //   const thisArrayName = this.getAttribute("thisArray") || "";
+        //   const thisValueName = this.getAttribute("thisValue") || "";
+        //   const thisIndexName = this.getAttribute("thisIndex") || "";
+
+        //   const evaluatedArrayValue = eval(thisArrayName);
+        //   const isArray = Array.isArray(evaluatedArrayValue);
+
+        //   if (!isArray) throw new Error(`"${thisArrayName}" is not an array`);
+
+        //   console.log(
+        //     evaluatedArrayValue,
+        //     thisArrayName,
+        //     thisValueName,
+        //     thisIndexName,
+        //   );
+
+        //   evaluatedArrayValue.forEach((thisArrayItem, thisArrayIndex) => {
+        //     /**
+        //      * @type {ThisComponent}
+        //      */
+        //     const laaForChild = document.createElement("laa-for-child");
+        //     // console.log(laaForChild);
+
+        //     // console.log(laaForChild);
+        //     laaForChild.state[thisValueName] = thisArrayItem;
+        //     laaForChild.state[thisIndexName] = thisArrayIndex;
+
+        //     // this.childNodes.forEach((thisChildNode) => {
+
+        //     //   laaForChild.appendChild(thisChildNode);
+        //     // });
+
+        //     this.shadowRoot.appendChild(laaForChild);
+        //   });
+        // })();
+
         this.state = new Proxy(this.state, {
           set: (parent, child, val, receiver) => {
             const successfullSet = Reflect.set(parent, child, val, receiver);
@@ -33,41 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return successfullSet;
           },
         });
-
-        (() => {
-          const isForLoop = this.nodeName == "laa-for".toUpperCase();
-          if (!isForLoop) return;
-
-          const thisArrayName = this.getAttribute("thisArray") || "";
-          const thisValueName = this.getAttribute("thisValue") || "";
-          const thisIndexName = this.getAttribute("thisIndex") || "";
-
-          const evaluatedArrayValue = eval(thisArrayName);
-          const isArray = Array.isArray(evaluatedArrayValue);
-
-          if (!isArray) throw new Error(`"${thisArrayName}" is not an array`);
-
-          console.log(evaluatedArrayValue, thisArrayName, thisValueName, thisIndexName);
-
-          evaluatedArrayValue.forEach((thisArrayItem, thisArrayIndex) => {
-            /**
-             * @type {ThisComponent}
-             */
-            const laaForChild = document.createElement("laa-for-child");
-            laaForChild.state[thisValueName] = thisArrayItem;
-            laaForChild.state[thisIndexName] = thisArrayIndex;
-            console.log(laaForChild.state);
-
-            console.log(laaForChild.state);
-
-            // this.childNodes.forEach((thisChildNode) => {
-              
-            //   laaForChild.appendChild(thisChildNode);
-            // });
-
-            this.shadowRoot.appendChild(laaForChild);
-          });
-        })();
 
         // (() => {
         //   const isForLoop = this.nodeName == "laa-for".toUpperCase();
@@ -119,7 +124,55 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    customElements.define(thisTemplate.id, ThisComponent);
+    class LaaFor extends ThisComponent {
+      connectedCallback() {
+        super.connectedCallback();
+        
+        // console.log("connectedCallback LaaFor");
+        // const thisArrayName = this.getAttribute("thisArray") || "";
+        // const thisValueName = this.getAttribute("thisValue") || "";
+        // const thisIndexName = this.getAttribute("thisIndex") || "";
+
+        // const evaluatedArrayValue = eval(thisArrayName);
+        // const isArray = Array.isArray(evaluatedArrayValue);
+
+        // if (!isArray) throw new Error(`"${thisArrayName}" is not an array`);
+
+        // evaluatedArrayValue.forEach((thisArrayItem, thisArrayIndex) => {
+        //   const slotElement = document.createElement("slot");
+
+        //   slotElement.setAttribute("thisArray", `${evaluatedArrayValue}`);
+        //   slotElement.setAttribute("thisValue", `${thisArrayItem}`);
+        //   slotElement.setAttribute("name", `${thisArrayIndex}`);
+        //   slotElement.setAttribute("thisIndex", `${thisArrayIndex}`);
+
+        //   this.state[thisArrayIndex] = thisArrayItem;
+
+        //   this.shadowRoot.appendChild(slotElement);
+
+        //   this.previousCloneNode
+        //     .cloneNode(true)
+        //     .childNodes.forEach((thisSlotElement) => {
+        //       if (thisSlotElement instanceof Text) return;
+        //       thisSlotElement.setAttribute("slot", `${thisArrayIndex}`);
+        //       this.appendChild(thisSlotElement);
+        //     });
+        // });
+      }
+    }
+
+    class LaaForChild extends ThisComponent {
+      _connectedCallback() {}
+    }
+
+    customElements.define(
+      thisTemplate.id,
+      thisTemplate.id == "laa-for"
+        ? LaaFor
+        : thisTemplate.id == "laa-for-child"
+          ? LaaForChild
+          : ThisComponent,
+    );
 
     /**
      *
