@@ -91,23 +91,30 @@ document.addEventListener("DOMContentLoaded", () => {
     function copyTemplateToComponentShadowRoot(thisComponent) {
       const templateWithoutScript = thisTemplate.content.cloneNode(true);
 
-      templateWithoutScript.querySelectorAll("script").forEach(
-        /**
-         *
-         * @param {HTMLScriptElement} thisScript
-         */
-        (thisScript) => {
-          thisScript.remove();
-        },
-      );
+      removeScriptNoModule();
+      addGridClassToEveryHtmlElementToSolveTailwindBug();
 
-      thisComponent.shadowRoot.appendChild(templateWithoutScript);
+      function removeScriptNoModule() {
+        templateWithoutScript.querySelectorAll("script").forEach(
+          /**
+           *
+           * @param {HTMLScriptElement} thisScript
+           */
+          (thisScript) => {
+            thisScript.remove();
+          },
+        );
 
-      thisComponent.childNodes.forEach((thisChildNode) => {
-        if (!(thisChildNode instanceof HTMLElement)) return;
-        if (thisChildNode instanceof HTMLSlotElement) return;
-        thisChildNode.classList.add("grid");
-      });
+        thisComponent.shadowRoot.appendChild(templateWithoutScript);
+      }
+
+      function addGridClassToEveryHtmlElementToSolveTailwindBug() {
+        thisComponent.childNodes.forEach((thisChildNode) => {
+          if (!(thisChildNode instanceof HTMLElement)) return;
+          if (thisChildNode instanceof HTMLSlotElement) return;
+          thisChildNode.classList.add("grid");
+        });
+      }
     }
 
     /**
