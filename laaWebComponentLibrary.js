@@ -24,7 +24,7 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
           if (!successfullSet) return false;
 
           updateUIwithNewStateValues(this);
-          
+
           return true;
         },
       });
@@ -82,7 +82,14 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
    * @param {ThisComponent} thisComponent
    */
   function updateUIwithNewStateValues(thisComponent) {
-    console.log(thisComponent.state);
+    const thisInnerHTML = {
+      slot: thisComponent.innerHTML,
+      template: thisComponent.shadowRoot.innerHTML
+    }
+    console.log(thisComponent.state, {
+      slot: thisInnerHTML.slot,
+      template: thisInnerHTML.template
+    });
   }
 });
 

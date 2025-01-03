@@ -50,26 +50,6 @@
 
   <template id="laa-child">
     child: {b} <slot></slot>
-    <script>
-      (() => { 
-        let thisComponent = document.currentScript.parentElement;
-        thisComponent.state["b"] = 1;
-        thisComponent.addEventListener('click', (e) => {
-          e.stopPropagation();
-          thisComponent.state["b"] = thisComponent.state['b'] + 1;
-        });
-      })();
-    </script>
-    <!-- <script>
-      (() => { 
-        let thisComponent = document.currentScript.parentElement;
-        let b = 1;
-        thisComponent.addEventListener('click', (e) => {
-          e.stopPropagation();
-          b = b + 1;
-        });
-      })();
-    </script> -->
   </template>
 </body>
 
