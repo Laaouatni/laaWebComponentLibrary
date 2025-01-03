@@ -8,47 +8,12 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="./laaWebComponentLibrary.js"></script>
   <script>
-    let arrayTest = [4];
-
-    const myState = new laaState({ d: 99, c: 30 });
-    const myAnotherState = new laaState({ d: 50, c: 0 });
-
-    myState.listenToVariableChange('d', (value) => {
-      console.log('d changed and its value is:', value);
-    });
-
-    myState.state.d++;
-    myState.state.d = 100;
-    myState.state.d = 100;
-    myState.state.d = 100;
-    myState.state.d = 100;
-    myState.state.d = 100;
-
-
-    document.addEventListener("click", () => {
-      myState.state.d--;
-    })
-
-    myState.listenToVariableChange('d', (value) => {
-      console.log('another:', value);
-    });
-
-    myState.listenToVariableChange('c', (value) => {
-      console.log('c:', value);
-    });
-
-    myAnotherState.listenToVariableChange("c", (value) => {
-      console.log("another state", value);
-    })
-
-    myAnotherState.state.c++;
+    const globalState = new laaState({ d: 99 });
   </script>
 </head>
 
 <body class="grid gap-8 p-2">
-  <!-- <laa-parent class="ml-4 grid border border-black rounded p-1">
-
-  </laa-parent> -->
+  <laa-parent class="ml-4 grid border border-black rounded p-1"></laa-parent>
 
   ciao
 
@@ -58,7 +23,7 @@
       + b: <span data-var="thisComponent.state.b"></span>
       = c: <span data-var="thisComponent.state.c"></span>
       ....
-      d: <span data-var="documentState.d"></span>
+      d: <span data-var="thisComponent.state.d"></span>
     </div>
     <slot></slot>
     <script>
@@ -67,13 +32,18 @@
 
         thisComponent.state['a'] = 0;
         thisComponent.state['b'] = 0;
-        thisComponent.state['c'] = () => thisComponent.state['a'] + thisComponent.state['b'] + documentState.d;
+        
+        thisComponent.state['d'] = globalState.state.d;
+        globalState.listenToVariableChange('d', (value) => {
+          thisComponent.state['d'] = value;
+        });
+
+        thisComponent.state['c'] = () => thisComponent.state['a'] + thisComponent.state['b'] + globalState.state.d;
 
         thisComponent.addEventListener('click', (e) => {
           e.stopPropagation();
           thisComponent.state['a']++
-          documentState.d--;
-          documentState.e++;
+          globalState.state.d++;
         });
       })();
     </script>
