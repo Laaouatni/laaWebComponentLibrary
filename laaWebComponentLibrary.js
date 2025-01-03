@@ -47,25 +47,25 @@ document.addEventListener("DOMContentLoaded", () => {
     class LaaFor extends ThisComponent {
       connectedCallback() {
         super.connectedCallback();
-
+        
         const thisArrayName = this.getAttribute("thisArray") || "";
         const thisValueName = this.getAttribute("thisValue") || "";
         const thisIndexName = this.getAttribute("thisIndex") || "";
-
+        
         const evaluatedArrayValue = eval(thisArrayName);
         const isArray = Array.isArray(evaluatedArrayValue);
-
+        
         if (!isArray) throw new Error(`"${thisArrayName}" is not an array`);
 
         evaluatedArrayValue.forEach((thisArrayValue, thisIndex) => {
           const childComponent = document.createElement("laa-for-child");
+          childComponent.setAttribute("slot", "childs");
           this.childNodes.forEach((thisChildNode) => {
             const thisChildNodeClone = thisChildNode.cloneNode(true);
             if (!(thisChildNode instanceof HTMLElement)) return;
             childComponent.appendChild(thisChildNodeClone);
           });
-          this.shadowRoot.appendChild(childComponent);
-          
+          this.appendChild(childComponent);
         });
       }
     }
@@ -81,8 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
       thisTemplate.id == "laa-for"
         ? LaaFor
         : thisTemplate.id == "laa-for-child"
-          ? LaaForChild
-          : ThisComponent,
+        ? LaaForChild
+        : ThisComponent,
     );
 
     /**
