@@ -21,11 +21,17 @@
         this.userListeners = {};
 
         this.state = new Proxy(initialStateObject, {
-          set: (parent, child, val, receiver) => {
-            const successfullSet = Reflect.set(parent, child, val, receiver);
+          set: (parent, property, thisNewValue, receiver) => {
+            const thisPreviousValue = parent[property];
+            const successfullSet = Reflect.set(parent, property, thisNewValue, receiver);
             if (!successfullSet) return false;
 
-            console.log(this.userListeners)
+            (() => {
+              if(thisPreviousValue === thisNewValue) return;
+              this.userListeners[property]?.forEach((callback) => {
+                callback(thisNewValue);
+              });
+            })();
 
             return successfullSet;
           }
@@ -33,23 +39,26 @@
       };
 
       listenToVariableChange(variableToListen, callback) {
-        if(!this.userListeners[variableToListen]) {
+        if (!this.userListeners[variableToListen]) {
           this.userListeners[variableToListen] = [];
         }
-
-        console.log(variableToListen, callback);
 
         this.userListeners[variableToListen].push(callback);
       }
     };
 
-    const myState = new laaState({ d: 99 });
-
-    myState.state.d++;
+    const myState = new laaState({ d: 99, c: 30 });
 
     myState.listenToVariableChange('d', (value) => {
       console.log('d changed and its value is:', value);
     });
+    myState.state.d++;
+    myState.state.d = 100;
+    myState.state.d = 100;
+    myState.state.d = 100;
+    myState.state.d = 100;
+    myState.state.d = 100;
+
 
     document.addEventListener("click", () => {
       myState.state.d--;
@@ -60,7 +69,7 @@
     });
 
     myState.listenToVariableChange('c', (value) => {
-      console.log('another:', value);
+      console.log('c:', value);
     });
 
     // Object.entries(documentState).forEach(([key, value]) => {
@@ -103,20 +112,20 @@
     </div>
     <slot></slot>
     <script>
-        (() => {
-          let thisComponent = document.currentScript.parentElement;
+      (() => {
+        let thisComponent = document.currentScript.parentElement;
 
-          thisComponent.state['a'] = 0;
-          thisComponent.state['b'] = 0;
-          thisComponent.state['c'] = () => thisComponent.state['a'] + thisComponent.state['b'] + documentState.d;
+        thisComponent.state['a'] = 0;
+        thisComponent.state['b'] = 0;
+        thisComponent.state['c'] = () => thisComponent.state['a'] + thisComponent.state['b'] + documentState.d;
 
-          thisComponent.addEventListener('click', (e) => {
-            e.stopPropagation();
-            thisComponent.state['a']++
-            documentState.d--;
-            documentState.e++;
-          });
-        })();
+        thisComponent.addEventListener('click', (e) => {
+          e.stopPropagation();
+          thisComponent.state['a']++
+          documentState.d--;
+          documentState.e++;
+        });
+      })();
     </script>
   </template>
 
