@@ -10,12 +10,6 @@
   <script>
     let arrayTest = [4];
 
-    // let documentState = {
-    //   d: 99,
-    //   e: 58,
-    //   f: 33
-    // };
-
     class laaState {
       constructor(initialStateObject = {}) {
         this.userListeners = {};
@@ -48,6 +42,7 @@
     };
 
     const myState = new laaState({ d: 99, c: 30 });
+    const myAnotherState = new laaState({ d: 50, c: 0 });
 
     myState.listenToVariableChange('d', (value) => {
       console.log('d changed and its value is:', value);
@@ -71,6 +66,12 @@
     myState.listenToVariableChange('c', (value) => {
       console.log('c:', value);
     });
+
+    myAnotherState.listenToVariableChange("c", (value) => {
+      console.log("another state", value);
+    })
+
+    myAnotherState.state.c++;
 
     // Object.entries(documentState).forEach(([key, value]) => {
     //   Object.defineProperty(documentState, key, {
