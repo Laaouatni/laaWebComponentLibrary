@@ -35,6 +35,14 @@ document.addEventListener("DOMContentLoaded", () => {
           if (!isArray) throw new Error(`"${thisArrayName}" is not an array`);
 
           evaluatedArrayValue.forEach((thisArrayItem, thisArrayIndex) => {
+            const slotElement = document.createElement("slot");
+
+            slotElement.setAttribute("thisArray", `${evaluatedArrayValue}`);
+            slotElement.setAttribute("thisValue", `${thisArrayItem}`);
+            slotElement.setAttribute("name", `${thisArrayIndex}`);
+            slotElement.setAttribute("thisIndex", `${thisArrayIndex}`);
+
+            this.appendChild(slotElement);
             console.log(thisArrayItem, thisArrayIndex);
           });
         })();
