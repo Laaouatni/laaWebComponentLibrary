@@ -86,10 +86,13 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
       slot: thisComponent.innerHTML,
       template: thisComponent.shadowRoot.innerHTML
     }
-    console.log(thisComponent.state, {
-      slot: thisInnerHTML.slot,
-      template: thisInnerHTML.template
+    const templateWithUpdatedValue = `${thisInnerHTML.template}`.replaceAll(/\{[^}]*\}/g, (thisVariableNameWithBrackets) => {
+      const thisVariableName = thisVariableNameWithBrackets.replace(/\{|\}/g, "");
+      console.log(thisVariableName)
+      return "ciao"
     });
+
+    console.log(templateWithUpdatedValue)
   }
 });
 

@@ -35,11 +35,12 @@
   </template> -->
 
   <template id="laa-parent">
-    parent: {a} <slot></slot>
+    parent: {a} and {a} and {a} e b: {b} <slot></slot>
     <script>
       (() => { 
         let thisComponent = document.currentScript.parentElement;
         thisComponent.state['a'] = 1;
+        thisComponent.state["b"] = 2;
         thisComponent.addEventListener('click', (e) => {
           e.stopPropagation();
           thisComponent.state['a'] = thisComponent.state['a'] + 1;
