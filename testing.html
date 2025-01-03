@@ -35,7 +35,7 @@
 
         thisComponent.state['a'] = 0;
         thisComponent.state['b'] = 0;
-        thisComponent.state['c'] = thisComponent.state['a'] + thisComponent.state['b'];
+        thisComponent.state['c'] = () => thisComponent.state['a'] + thisComponent.state['b'];
 
         thisComponent.addEventListener('click', (e) => {
           e.stopPropagation();

@@ -136,11 +136,17 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
   function updateUIwithNewStateValues(thisComponent) {
     const allVariableElementToChange =
       thisComponent.shadowRoot.querySelectorAll("[data-var]");
-    console.log(allVariableElementToChange);
 
     allVariableElementToChange.forEach((thisVariableElement) => {
       const variableName = thisVariableElement.getAttribute("data-var");
-      thisVariableElement.textContent = eval(variableName || "");
+      if (!variableName) return;
+
+      const evaluatedValue = eval(variableName);
+      const isFunctionVariable = typeof evaluatedValue == "function";
+
+      thisVariableElement.textContent = isFunctionVariable
+        ? evaluatedValue()
+        : evaluatedValue;
     });
   }
 
