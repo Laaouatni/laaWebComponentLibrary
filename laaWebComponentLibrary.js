@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
       _connectedCallback() {}
       connectedCallback() {
         this._connectedCallback();
-
+        console.log("connectedCallback");
         (() => {
           const isForLoop = this.nodeName == "laa-for".toUpperCase();
           if (!isForLoop) return;
@@ -42,9 +42,18 @@ document.addEventListener("DOMContentLoaded", () => {
             slotElement.setAttribute("name", `${thisArrayIndex}`);
             slotElement.setAttribute("thisIndex", `${thisArrayIndex}`);
 
-            const addedSlotElementInShadowRoot = this.shadowRoot.appendChild(slotElement);
+            this.shadowRoot.appendChild(slotElement);
+
+            const slotElementsToAdd = this.cloneNode(true).childNodes;
+            slotElementsToAdd.forEach((thisSlotElement) => {
+              if (thisSlotElement instanceof Text) return;
+              thisSlotElement.setAttribute("slot", `${thisArrayIndex}`);
+              this.appendChild(thisSlotElement);
+            });
+
+            // this.appendChild(this.cloneNode(true));
             // this.shadowRoot.appendChild(slotElement);
-            addedSlotElementInShadowRoot.appendChild(this.cloneNode(true))
+            // addedSlotElementInShadowRoot.appendChild(this.cloneNode(true))
             // console.log(thisArrayItem, thisArrayIndex);
           });
         })();
