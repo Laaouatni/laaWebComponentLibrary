@@ -22,14 +22,13 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
         set: (parent, child, val, receiver) => {
           const successfullSet = Reflect.set(parent, child, val, receiver);
           if (!successfullSet) return false;
-
           updateUIwithNewStateValues(this);
-
-          return true;
+          return successfullSet;
         },
       });
 
       copyTemplateToComponentShadowRoot(this);
+      copyTemplateAttributesToComponent(this);
       copyTemplateScriptToComponent(this);
     }
     _disconnectedCallback() {}
@@ -92,6 +91,26 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
       })
     })
   };
+
+  /**
+   *
+   * @param {ThisComponent} thisComponent
+   */
+  function copyTemplateAttributesToComponent(thisComponent) {
+    const notWantedAttributes = ["id"];
+
+    [...thisTemplate.attributes].forEach((thisTemplateAttribute) => {
+      if (!(thisTemplateAttribute.nodeValue)) return;
+      let canIgnoreAttribute = false;
+      notWantedAttributes.forEach((thisUnwantedAttribute) => {
+        if (thisTemplateAttribute.nodeName == thisUnwantedAttribute) canIgnoreAttribute = true;
+      });
+      if (canIgnoreAttribute) return;
+      thisComponent.setAttribute(thisTemplateAttribute.nodeName, thisTemplateAttribute.nodeValue)
+    });
+
+    // console.log(thisTemplate.attributes[0].nodeName)
+  }
 });
 
 /**

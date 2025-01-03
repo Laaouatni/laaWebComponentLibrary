@@ -34,16 +34,13 @@
     <slot></slot>
   </template> -->
 
-  <template id="laa-parent">
+  <template id="laa-parent" class="bg-green-500">
     ciao sono la var a: <div data-var="a"></div>,
-    ciao sono ancora un'altra a: <span data-var="a"></span>,
-    ciao sono invece una b: <div data-var="b"></div>
     <slot></slot>
     <script>
       (() => { 
         let thisComponent = document.currentScript.parentElement;
         thisComponent.state['a'] = 1;
-        thisComponent.state["b"] = 2;
         thisComponent.addEventListener('click', (e) => {
           e.stopPropagation();
           thisComponent.state['a'] = thisComponent.state['a'] + 1;
@@ -52,7 +49,7 @@
     </script>
   </template>
 
-  <template id="laa-child">
+  <template id="laa-child" class="bg-red-500">
     ciao sono la var c: <span data-var="c"></span>,
     <slot></slot>
     <script>
