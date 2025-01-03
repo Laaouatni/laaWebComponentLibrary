@@ -83,14 +83,15 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
    */
   function updateUIwithNewStateValues(thisComponent) {
     Object.entries(thisComponent.state).forEach(([key, value]) => {
-      const variableHtmlElementsToChange = thisComponent.shadowRoot.querySelectorAll(`[data-var=${key}]`);
+      const variableHtmlElementsToChange =
+        thisComponent.shadowRoot.querySelectorAll(`[data-var=${key}]`);
       if (variableHtmlElementsToChange.length == 0) return;
 
       variableHtmlElementsToChange.forEach((thisVariableElement) => {
-        thisVariableElement.textContent = value
-      })
-    })
-  };
+        thisVariableElement.textContent = value;
+      });
+    });
+  }
 
   /**
    *
@@ -98,15 +99,46 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
    */
   function copyTemplateAttributesToComponent(thisComponent) {
     const notWantedAttributes = ["id"];
+    const notMergableAttributes = [];
 
     [...thisTemplate.attributes].forEach((thisTemplateAttribute) => {
-      if (!(thisTemplateAttribute.nodeValue)) return;
+      if (!thisTemplateAttribute.nodeValue) return;
+
       let canIgnoreAttribute = false;
+      let canMergeAttribute = true;
+
       notWantedAttributes.forEach((thisUnwantedAttribute) => {
-        if (thisTemplateAttribute.nodeName == thisUnwantedAttribute) canIgnoreAttribute = true;
+        if (thisTemplateAttribute.nodeName == thisUnwantedAttribute)
+          canIgnoreAttribute = true;
       });
       if (canIgnoreAttribute) return;
-      thisComponent.setAttribute(thisTemplateAttribute.nodeName, thisTemplateAttribute.nodeValue)
+
+      const hasAlreadyAttribute = !!thisComponent.getAttribute(
+        thisTemplateAttribute.nodeName,
+      );
+
+      if (hasAlreadyAttribute) {
+        notMergableAttributes.forEach((thisNotMergableAttribute) => {
+          if (thisTemplateAttribute.nodeName == thisNotMergableAttribute)
+            canMergeAttribute = false;
+        });
+
+        if (canMergeAttribute) {
+          thisComponent.setAttribute(
+            thisTemplateAttribute.nodeName,
+            `${thisComponent.getAttribute(thisTemplateAttribute.nodeName)} ${
+              thisTemplateAttribute.nodeValue
+            }`,
+          );
+
+          return;
+        }
+      }
+
+      thisComponent.setAttribute(
+        thisTemplateAttribute.nodeName,
+        thisTemplateAttribute.nodeValue,
+      );
     });
 
     // console.log(thisTemplate.attributes[0].nodeName)
