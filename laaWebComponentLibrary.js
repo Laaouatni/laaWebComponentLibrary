@@ -1,322 +1,255 @@
-/* created by Laaouatni - https://github.com/Laaouatni/ */
+// /* created by Laaouatni - https://github.com/Laaouatni/ */
 
-document.querySelectorAll("template").forEach((thisTemplateElement) => {
-  const STATE_OBJECT_POSITION_PREFIX_STRING = "thisComponent.stateVariables.";
+document.querySelectorAll("template").forEach((thisTemplate) => {
+  thisTemplate.content.querySelectorAll("script").forEach((thisScript) => {
+    thisScript.noModule = true;
+  });
+
   class ThisComponent extends HTMLElement {
-    /**
-     * @type {ShadowRoot}
-     */
-    shadowDom;
-
     /**
      *
      * @type {{[variableName:string]: any}}
      */
-    stateVariables = {};
+    state = {};
 
-    /**
-     *
-     * @type {DOMTokenList | string[]} initialClassList
-     */
-    initialClassList;
-    constructor() {
-      super();
-    }
+    shadowRoot = this.attachShadow({ mode: "open" });
 
-    static get observedAttributes() {
-      const attributesToObserve = [...thisTemplateElement.attributes]
-        .map((thisAttribute) => thisAttribute.nodeName)
-        .filter((thisAttribute) => {
-          let canSkip = false;
-          ["id", "class", "style"].forEach((thisAttributeName) => {
-            if (thisAttribute == thisAttributeName) canSkip = true;
-          });
-          return !canSkip;
-        });
-      return attributesToObserve;
-    }
+    previousAttributes = {};
 
     _connectedCallback() {}
     connectedCallback() {
       this._connectedCallback();
 
-      const copyFromTemplateToComponent = {
-        templateContent: copyTemplateContentToComponentShadowDom,
-        attributes: copyAttributesFromTemplateToComponent,
-        scripts: copyScriptsFromTemplateToComponent,
-      };
-
-      copyFromTemplateToComponent.templateContent(this);
-      copyFromTemplateToComponent.attributes(this, ["class", "style"]);
-      this.initialClassList = [...this.classList];
-      
-      this.stateVariables = new Proxy(this.stateVariables, {
-        set: (parent, child, val) => {
-          parent[child] = val;
-          updateComponentInnerHtmlVariables(this);
-          updateClassAttribute(this);
-          return true;
+      this.state = new Proxy(this.state, {
+        set: (parent, child, val, receiver) => {
+          const successfullSet = Reflect.set(parent, child, val, receiver);
+          if (!successfullSet) return false;
+          updateUIwithNewStateValues(this);
+          updateAttributesWithNewStateValues(this);
+          return successfullSet;
         },
       });
 
-      copyFromTemplateToComponent.scripts(this);
+      copyTemplateToComponentShadowRoot(this);
+      copyTemplateAttributesToComponent(this);
+      copyTemplateScriptToComponent(this);
     }
-
     _disconnectedCallback() {}
     disconnectedCallback() {
       this._disconnectedCallback();
     }
-
-    /**
-     * @param {string} attributeName
-     * @param {any} oldValue
-     * @param {any} newValue
-     */
-    _attributeChangedCallback(attributeName, oldValue, newValue) {}
-    /**
-     * @param {string} attributeName
-     * @param {any} oldValue
-     * @param {any} newValue
-     */
-    attributeChangedCallback(attributeName, oldValue, newValue) {
-      this._attributeChangedCallback(attributeName, oldValue, newValue);
-    }
   }
 
-  customElements.define(thisTemplateElement.id, ThisComponent);
+  customElements.define(thisTemplate.id, ThisComponent);
 
   /**
    *
    * @param {ThisComponent} thisComponent
    */
-  function updateClassAttribute(thisComponent) {
-    let updateClassListString = "";
+  function copyTemplateToComponentShadowRoot(thisComponent) {
+    const templateWithoutScript = thisTemplate.content.cloneNode(true);
 
-    thisComponent.initialClassList.forEach(
+    templateWithoutScript.querySelectorAll("script").forEach(
       /**
-       * 
-       * @param {typeof thisComponent.initialClassList[number]} thisClass 
-       * @returns 
+       *
+       * @param {HTMLScriptElement} thisScript
        */
-      (thisClass) => {
-      const isDynamicClass =
-        thisClass.startsWith("{") && thisClass.endsWith("}");
-      if (!isDynamicClass) {
-        updateClassListString += `${thisClass} `;
-        return;
-      }
-      const splittedClass = thisClass.split(/\?|:/g);
-      const thisClassData = {
-        condition: addSyntacticSugarClassConditions(
-          splittedClass[0],
-          thisComponent,
-        ),
-        trueClass: splittedClass[1].replaceAll("'", ""),
-        falseClass: splittedClass[2].replaceAll("'", ""),
-      };
-
-      try {
-        const evaluatedClassCondition = eval(thisClassData.condition)
-        if (evaluatedClassCondition) {
-          updateClassListString += `${thisClassData.trueClass} `;
-        }
-      } catch (e) {/*skip*/};
-    });
-
-    thisComponent.setAttribute("class", updateClassListString.trim());
-  }
-
-  /**
-   *
-   * @param {string} conditionString
-   * @param {ThisComponent} thisComponent
-   * @returns {string}
-   */
-  function addSyntacticSugarClassConditions(conditionString, thisComponent) {
-    let result = conditionString.replace("{", "");
-    Object.keys(thisComponent.stateVariables).forEach((thisVariableName) => {
-      const regexVariable = new RegExp(
-        `(?<!\\w)(${thisVariableName})(?!\\w)`,
-        "g",
-      );
-      result = result.replaceAll(regexVariable, `${STATE_OBJECT_POSITION_PREFIX_STRING}${thisVariableName}`);
-    });
-    return result;
-  }
-
-  /**
-   *
-   * @param {ThisComponent} thisComponent
-   */
-  function updateComponentInnerHtmlVariables(thisComponent) {
-    thisComponent.shadowDom.innerHTML =
-      replaceHtmlStringVariablesBracketsWithValues(thisComponent);
-  }
-
-  /**
-   *
-   * @param {string} htmlStringToMinify
-   * @returns {string}
-   */
-  function minifyHtmlString(htmlStringToMinify) {
-    return htmlStringToMinify.replaceAll("\n", "").replaceAll("  ", "");
-  }
-
-  /**
-   *
-   * @param {ThisComponent} thisComponent
-   * @returns {string}
-   */
-  function replaceSlotTagWithSlotContent(thisComponent) {
-    const minifiedHtmlStrings = {
-      shadowDom: minifyHtmlString(thisTemplateElement.innerHTML),
-      slot: minifyHtmlString(thisComponent.innerHTML),
-    };
-    const regexScriptTag = /<script>.*<\/script>/g;
-    const slotHtmlStringWithoutScripts = minifiedHtmlStrings.slot.replace(
-      regexScriptTag,
-      "",
-    );
-    return minifiedHtmlStrings.shadowDom.replaceAll(
-      "<slot></slot>",
-      slotHtmlStringWithoutScripts,
-    );
-  }
-
-  /**
-   *
-   * @param {ThisComponent} thisComponent
-   * @returns {string}
-   */
-  function replaceHtmlStringVariablesBracketsWithValues(thisComponent) {
-    const thisComponentHtmlWithSlotTagReplacedWithSlotContent =
-      replaceSlotTagWithSlotContent(thisComponent);
-    const regexGetAllVariableBracketsInString = /\{.[^}]*\}/g;
-
-    return thisComponentHtmlWithSlotTagReplacedWithSlotContent.replace(
-      regexGetAllVariableBracketsInString,
-      (thisVariableBracketStringPart) => {
-        const variableName = thisVariableBracketStringPart.replace(
-          /\{|\}/g,
-          "",
-        );
-        const variableValue = thisComponent.stateVariables[variableName];
-        const isFunctionVariable = typeof variableValue == "function";
-        const variableValueToReturn = isFunctionVariable ? variableValue() : variableValue;
-        return variableValueToReturn;
+      (thisScript) => {
+        thisScript.remove();
       },
     );
+
+    thisComponent.shadowRoot.appendChild(templateWithoutScript);
   }
 
   /**
-   * 
-   * @param {ThisComponent} thisComponent 
-   */
-  function copyTemplateContentToComponentShadowDom(thisComponent) {
-    thisComponent.shadowDom = thisComponent.attachShadow({ mode: "open" });
-    const clonedTemplateContent = thisTemplateElement.content.cloneNode(true);
-
-    clonedTemplateContent.childNodes.forEach((thisChild) => {
-      if (thisChild instanceof HTMLScriptElement) thisChild.remove();
-    });
-
-    thisComponent.shadowDom.appendChild(clonedTemplateContent);
-  }
-
-  /**
+   *
    * @param {ThisComponent} thisComponent
-   * @param {string[]} attributesToCopyArray
    */
-  function copyAttributesFromTemplateToComponent(thisComponent, attributesToCopyArray) {
-    attributesToCopyArray.forEach((thisAttributeName) => {
-      if (!thisTemplateElement.hasAttribute(thisAttributeName)) return;
+  function copyTemplateAttributesToComponent(thisComponent) {
+    const notWantedAttributes = ["id"];
+    const notMergableAttributes = [];
+
+    [...thisTemplate.attributes].forEach((thisTemplateAttribute) => {
+      if (!thisTemplateAttribute.nodeValue) return;
+
+      const canIgnoreAttribute = notWantedAttributes.some(
+        (thisUnwantedAttribute) => {
+          return thisTemplateAttribute.nodeName == thisUnwantedAttribute;
+        },
+      );
+
+      if (canIgnoreAttribute) return;
+
+      const hasAlreadyAttribute = !!thisComponent.getAttribute(
+        thisTemplateAttribute.nodeName,
+      );
+
+      if (hasAlreadyAttribute) {
+        const canMergeAttribute = !notMergableAttributes.some(
+          (thisNotMergableAttribute) => {
+            return thisTemplateAttribute.nodeName == thisNotMergableAttribute;
+          },
+        );
+
+        if (canMergeAttribute) {
+          thisComponent.setAttribute(
+            thisTemplateAttribute.nodeName,
+            `${thisComponent.getAttribute(thisTemplateAttribute.nodeName)} ${
+              thisTemplateAttribute.nodeValue
+            }`,
+          );
+
+          return;
+        }
+      }
 
       thisComponent.setAttribute(
-        thisAttributeName,
-        `${
-          thisComponent.getAttribute(thisAttributeName) || ""
-        } ${thisTemplateElement.getAttribute(thisAttributeName)}`.trim(),
+        thisTemplateAttribute.nodeName,
+        thisTemplateAttribute.nodeValue,
       );
     });
   }
 
   /**
-   * 
-   * @param {ThisComponent} thisComponent 
+   *
+   * @param {ThisComponent} thisComponent
    */
-  function copyScriptsFromTemplateToComponent(thisComponent) {
-    const allScriptElementsInside = {
-      template: thisTemplateElement.content.querySelectorAll("script"),
-      component: thisComponent.querySelectorAll("script"),
-    };
+  function copyTemplateScriptToComponent(thisComponent) {
+    const templateScripts = thisTemplate.content.querySelectorAll("script");
+    if (templateScripts.length == 0) return;
 
-    const generatedScriptElementInsideComponent =
-      document.createElement("script");
+    const generatedScript = document.createElement("script");
 
-    const mergedScriptTags = [
-      ...allScriptElementsInside.template,
-      ...allScriptElementsInside.component,
-    ]
-      .map((thisScriptTemplateElement) => {
-        if (!thisScriptTemplateElement.textContent) return "";
-        return thisScriptTemplateElement.textContent;
-      })
-      .join("");
-
-    const syntacticSugarVariablesAddedToScriptString =
-      addSyntacticSugarVariableDeclarationsToScriptTextContent(
-        mergedScriptTags,
-      );
-
-    generatedScriptElementInsideComponent.textContent =
-      isolateScriptStringInsideComponent(
-        syntacticSugarVariablesAddedToScriptString,
-      ).replaceAll("  ", "");
-
-    thisComponent.appendChild(generatedScriptElementInsideComponent);
-  }
-
-  /**
-   * @param {string} scriptTextContentString
-   * @returns {string}
-   */
-  function addSyntacticSugarVariableDeclarationsToScriptTextContent(
-    scriptTextContentString,
-  ) {
-    const allVariableDefinitionInfo = [
-      ...scriptTextContentString.matchAll(/(let|const)(.[^=]*)=/g),
-    ].map((thisMatch) => {
-      return {
-        variableDefinitionType: thisMatch[1],
-        variableName: thisMatch[2].trim(),
-      };
+    templateScripts.forEach((thisTemplateScript) => {
+      if (thisTemplateScript.textContent == "") return;
+      generatedScript.textContent += thisTemplateScript.textContent;
     });
 
-    const allVariableDefinitionInfoWithPositionReplaced =
-      allVariableDefinitionInfo
-        .reduce((prev, curr, index) => {
-          const regexVariablePositions = new RegExp(
-            `(?<!\\w)(${curr.variableName})(?!\\w)`,
-            "g",
-          );
-
-          return prev.replaceAll(
-            regexVariablePositions,
-            `${STATE_OBJECT_POSITION_PREFIX_STRING}${curr.variableName}`,
-          );
-        }, scriptTextContentString)
-        .replaceAll(/let|const/g, "");
-
-    return allVariableDefinitionInfoWithPositionReplaced;
+    thisComponent.appendChild(generatedScript);
   }
+
   /**
-   * @param   {string} thisScriptString
-   * @returns {string}
+   *
+   * @param {ThisComponent} thisComponent
    */
-  function isolateScriptStringInsideComponent(thisScriptString) {
-    return `(()=>{
-              const thisComponent = document.currentScript.parentElement;
-              ${thisScriptString}}
-            )()`;
+  function updateUIwithNewStateValues(thisComponent) {
+    Object.entries(thisComponent.state).forEach(([key, value]) => {
+      const variableHtmlElementsToChange =
+        thisComponent.shadowRoot.querySelectorAll(`[data-var=${key}]`);
+      if (variableHtmlElementsToChange.length == 0) return;
+
+      variableHtmlElementsToChange.forEach((thisVariableElement) => {
+        thisVariableElement.textContent = value;
+      });
+    });
+  }
+
+  /**
+   *
+   * @param {ThisComponent} thisComponent
+   */
+  function updateAttributesWithNewStateValues(thisComponent) {
+    [...thisComponent.attributes].forEach((thisComponentAttribute) => {
+      if (!thisComponentAttribute.nodeValue) return;
+
+      const hasAtLeastOneVariable =
+        !!thisComponentAttribute.nodeValue.match(/\{[^\}]*\}/g);
+
+      if (
+        !hasAtLeastOneVariable &&
+        thisComponent.previousAttributes[thisComponentAttribute.nodeName]
+      ) {
+        thisComponent.setAttribute(
+          thisComponentAttribute.nodeName,
+          thisComponent.previousAttributes[thisComponentAttribute.nodeName],
+        );
+      }
+
+      const newEvaluatedValue = thisComponent
+        .getAttribute(thisComponentAttribute.nodeName)
+        ?.replaceAll(
+          /\{[^\}]*\}/g,
+          (thisVariableAttributeExpressionWithBrackets) => {
+            const thisVariableExpression =
+              thisVariableAttributeExpressionWithBrackets.replaceAll(
+                /\{|\}/g,
+                "",
+              );
+            return eval(thisVariableExpression);
+          },
+      );
+
+      thisComponent.previousAttributes[thisComponentAttribute.nodeName] =
+        thisComponentAttribute.nodeValue;
+
+      thisComponent.setAttribute(
+        thisComponentAttribute.nodeName,
+        newEvaluatedValue || "",
+      );
+    });
   }
 });
+
+/**
+ * @typedef {{parent: HTMLElement, childs?: (ChildNode | HTMLElement | TypeHtmlElementStructure)[] }} TypeHtmlElementStructure
+ */
+
+/**
+ *
+ * @param {HTMLElement} paramHtmlElement
+ * @returns {TypeHtmlElementStructure}
+ */
+function getHtmlElementArrayStructure(paramHtmlElement) {
+  return recursiveRemoveUnwantedItems(paramHtmlElement);
+
+  /**
+   *
+   * @param {HTMLElement} paramHtmlElement
+   * @returns {TypeHtmlElementStructure}
+   */
+  function recursiveRemoveUnwantedItems(paramHtmlElement) {
+    const parentElementWithUnwantedItems =
+      removeUnwantedItems(paramHtmlElement);
+    if (parentElementWithUnwantedItems.length == 0)
+      return { parent: paramHtmlElement };
+
+    return {
+      parent: paramHtmlElement,
+      childs: parentElementWithUnwantedItems.map((thisElement) => {
+        if (thisElement.childNodes.length == 0) return thisElement;
+        return recursiveRemoveUnwantedItems(thisElement);
+      }),
+    };
+  }
+
+  /**
+   *
+   * @param {HTMLElement} paramHtmlElement
+   * @returns {ChildNode[]}
+   */
+  function removeUnwantedItems(paramHtmlElement) {
+    return [...paramHtmlElement.childNodes].filter((thisChildNode) => {
+      const conditions = {
+        text: {
+          isText: thisChildNode instanceof Text,
+          isEmpty:
+            (thisChildNode.textContent || "")
+              .replaceAll("\n", "")
+              .replaceAll(" ", "") == "",
+        },
+        isComment: thisChildNode instanceof Comment,
+        isScript: thisChildNode instanceof HTMLScriptElement,
+        isTemplate: thisChildNode instanceof HTMLTemplateElement,
+      };
+
+      const isUnwantedItem =
+        (conditions.text.isText && conditions.text.isEmpty) ||
+        conditions.isComment ||
+        conditions.isScript ||
+        conditions.isTemplate;
+
+      return !isUnwantedItem;
+    });
+  }
+}
