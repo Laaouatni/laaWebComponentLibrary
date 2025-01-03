@@ -16,6 +16,9 @@
 <body class="grid gap-8 p-2">
   <laa-a>
     slot: <span data-var="thisComponent.state.a"></span>
+    <laa-a>
+      <span data-var="thisComponent.state.a"></span>
+    </laa-a>
   </laa-a>
   <!-- <laa-for thisArray="testArray" thisValue="thisValue" thisIndex="thisIndex" class="grid gap-4">
     <div class="outline rounded-lg">
@@ -47,7 +50,10 @@
       (() => {
         let thisComponent = document.currentScript.parentElement;
         thisComponent.state['a'] = 0;
-        thisComponent.state['b'] = 0;
+        thisComponent.addEventListener('click', (e) => {
+          e.stopPropagation();
+          thisComponent.state['a']++
+        });
       })()
     </script>
   </template>
