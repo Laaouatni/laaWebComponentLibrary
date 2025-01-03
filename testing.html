@@ -35,7 +35,9 @@
   </template> -->
 
   <template id="laa-parent">
-    parent: {a} and {a} and {a} e b: {b} 
+    ciao sono la var a: <div data-var="a"></div>,
+    ciao sono ancora un'altra a: <span data-var="a"></span>,
+    ciao sono invece una b: <div data-var="b"></div>
     <slot></slot>
     <script>
       (() => { 
@@ -51,7 +53,18 @@
   </template>
 
   <template id="laa-child">
-    child: {b} <slot></slot>
+    ciao sono la var c: <span data-var="c"><span/>,
+    <slot></slot>
+    <script>
+      (() => { 
+        let thisComponent = document.currentScript.parentElement;
+        thisComponent.state['c'] = 1;
+        thisComponent.addEventListener('click', (e) => {
+          e.stopPropagation();
+          thisComponent.state['c'] = thisComponent.state['c'] + 1;
+        });
+      })();
+    </script>
   </template>
 </body>
 

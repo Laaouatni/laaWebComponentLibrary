@@ -75,7 +75,6 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
       },
     );
 
-   
     thisComponent.shadowRoot.appendChild(templateWithoutScript);
   }
 
@@ -88,13 +87,15 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
       slot: thisComponent.innerHTML,
       template: thisComponent.shadowRoot.innerHTML
     }
-    const templateWithUpdatedValue = `${thisInnerHTML.template}`.replaceAll(/\{[^}]*\}/g, (thisVariableNameWithBrackets) => {
-      const thisVariableName = thisVariableNameWithBrackets.replace(/\{|\}/g, "");
-      return thisComponent.state[thisVariableName];
-    });
+    // const templateWithUpdatedValue = `${thisInnerHTML.template}`.replaceAll(/\{[^}]*\}/g, (thisVariableNameWithBrackets) => {
+    //   const thisVariableName = thisVariableNameWithBrackets.replace(/\{|\}/g, "");
+    //   return thisComponent.state[thisVariableName];
+    // });
 
-    thisComponent.shadowRoot.innerHTML = templateWithUpdatedValue;
-    console.log(templateWithUpdatedValue, thisComponent.shadowRoot.innerHTML)
+    // console.log(thisTemplate)
+
+    // thisComponent.shadowRoot.innerHTML = templateWithUpdatedValue;
+    // console.log(templateWithUpdatedValue, thisComponent.shadowRoot.innerHTML)
   };
 });
 
