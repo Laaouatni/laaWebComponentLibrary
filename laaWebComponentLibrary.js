@@ -21,6 +21,12 @@ document.addEventListener("DOMContentLoaded", () => {
       connectedCallback() {
         this._connectedCallback();
 
+        (() => {
+          const isForLoop = this.nodeName == "laa-for".toUpperCase();
+          if (!isForLoop) return;
+          
+        })();
+
         this.state = new Proxy(this.state, {
           set: (parent, child, val, receiver) => {
             const successfullSet = Reflect.set(parent, child, val, receiver);

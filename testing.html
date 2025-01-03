@@ -8,14 +8,19 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="./laaWebComponentLibrary.js"></script>
   <script>
+    let testArray = [1,2,3,4];
     const globalState = new laaState({ d: 99 });
   </script>
 </head>
 
 <body class="grid gap-8 p-2">
-  <laa-parent class="ml-4 grid border border-black rounded p-1"></laa-parent>
+  <laa-for thisArray="testArray" thisValue="thisValue" thisIndex="thisIndex">
+    <laa-parent class="ml-4 grid border border-black rounded p-1"></laa-parent>
+  </laa-for>
 
-  ciao
+  <template id="laa-for">
+    <slot name="{thisIndex}"></slot>
+  </template>
 
   <template id="laa-parent" class="{thisComponent.state.a>3?'bg-green-500':'bg-slate-500'}">
     <div>
