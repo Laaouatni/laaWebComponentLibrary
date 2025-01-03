@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
       connectedCallback() {
         this._connectedCallback();
         console.log("connectedCallback");
-        
+
         (() => {
           const isForLoop = this.nodeName == "laa-for".toUpperCase();
           if (!isForLoop) return;
@@ -47,16 +47,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
             slotElement.setAttribute("thisArray", `${evaluatedArrayValue}`);
             slotElement.setAttribute("thisValue", `${thisArrayItem}`);
-            slotElement.setAttribute("name",      `${thisArrayIndex}`);
+            slotElement.setAttribute("name", `${thisArrayIndex}`);
             slotElement.setAttribute("thisIndex", `${thisArrayIndex}`);
 
             this.shadowRoot.appendChild(slotElement);
-            
-            this.previousCloneNode.cloneNode(true).childNodes.forEach((thisSlotElement) => {
-              if (thisSlotElement instanceof Text) return;
-              thisSlotElement.setAttribute("slot", `${thisArrayIndex}`);
-              this.appendChild(thisSlotElement);
-            });
+
+            this.previousCloneNode
+              .cloneNode(true)
+              .childNodes.forEach((thisSlotElement) => {
+                if (thisSlotElement instanceof Text) return;
+                thisSlotElement.setAttribute("slot", `${thisArrayIndex}`);
+                this.appendChild(thisSlotElement);
+              });
           });
         })();
 
@@ -100,6 +102,12 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       thisComponent.shadowRoot.appendChild(templateWithoutScript);
+
+      thisComponent.childNodes.forEach((thisChildNode) => {
+        if (!(thisChildNode instanceof HTMLElement)) return;
+        if (thisChildNode instanceof HTMLSlotElement) return;
+        thisChildNode.classList.add("grid");
+      });
     }
 
     /**
