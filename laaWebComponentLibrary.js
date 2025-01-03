@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
       connectedCallback() {
         this._connectedCallback();
         console.log("connectedCallback");
+        
         (() => {
           const isForLoop = this.nodeName == "laa-for".toUpperCase();
           if (!isForLoop) return;
