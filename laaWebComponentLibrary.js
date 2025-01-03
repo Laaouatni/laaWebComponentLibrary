@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!successfullSet) return false;
             updateUIwithNewStateValues(this);
             updateAttributesWithNewStateValues(this);
+            // console.log(this,this.state);
             return successfullSet;
           },
         });
@@ -58,15 +59,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
         evaluatedArrayValue.forEach((thisArrayValue, thisIndex) => {
           const childComponent = document.createElement("laa-for-child");
-          childComponent.innerHTML = "hello"
+          this.childNodes.forEach((thisChildNode) => {
+            const thisChildNodeClone = thisChildNode.cloneNode(true);
+            if (!(thisChildNode instanceof HTMLElement)) return;
+            childComponent.appendChild(thisChildNodeClone);
+          });
           this.shadowRoot.appendChild(childComponent);
-          console.log(childComponent);
+          
         });
       }
     }
 
     class LaaForChild extends ThisComponent {
-      _connectedCallback() {}
+      connectedCallback() {
+        super.connectedCallback();
+      }
     }
 
     customElements.define(
