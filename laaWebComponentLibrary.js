@@ -74,6 +74,8 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
         thisScript.remove();
       },
     );
+
+   
     thisComponent.shadowRoot.appendChild(templateWithoutScript);
   }
 
@@ -88,12 +90,12 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
     }
     const templateWithUpdatedValue = `${thisInnerHTML.template}`.replaceAll(/\{[^}]*\}/g, (thisVariableNameWithBrackets) => {
       const thisVariableName = thisVariableNameWithBrackets.replace(/\{|\}/g, "");
-      console.log(thisVariableName)
-      return "ciao"
+      return thisComponent.state[thisVariableName];
     });
 
-    console.log(templateWithUpdatedValue)
-  }
+    thisComponent.shadowRoot.innerHTML = templateWithUpdatedValue;
+    console.log(templateWithUpdatedValue, thisComponent.shadowRoot.innerHTML)
+  };
 });
 
 /**
