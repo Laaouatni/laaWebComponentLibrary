@@ -14,10 +14,12 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
 
     shadowRoot = this.attachShadow({ mode: "open" });
 
+    previousAttributes = {};
+
     _connectedCallback() {}
     connectedCallback() {
       this._connectedCallback();
-      
+
       this.state = new Proxy(this.state, {
         set: (parent, child, val, receiver) => {
           const successfullSet = Reflect.set(parent, child, val, receiver);
@@ -27,7 +29,7 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
           return successfullSet;
         },
       });
-      
+
       copyTemplateToComponentShadowRoot(this);
       copyTemplateAttributesToComponent(this);
       copyTemplateScriptToComponent(this);
@@ -144,29 +146,43 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
   }
 
   /**
-   * 
-   * @param {ThisComponent} thisComponent 
+   *
+   * @param {ThisComponent} thisComponent
    */
   function updateAttributesWithNewStateValues(thisComponent) {
     [...thisComponent.attributes].forEach((thisComponentAttribute) => {
       if (!thisComponentAttribute.nodeValue) return;
 
-      const hasAtLeastOneVariable = !!(thisComponentAttribute.nodeValue.match(/\{[^\}]*\}/g));
-      if (!hasAtLeastOneVariable) return;
+      const hasAtLeastOneVariable =
+        !!thisComponentAttribute.nodeValue.match(/\{[^\}]*\}/g);
+      
+      if (!hasAtLeastOneVariable && thisComponent.previousAttributes[thisComponentAttribute.nodeName]) {
+        thisComponent.setAttribute(
+          thisComponentAttribute.nodeName,
+          thisComponent.previousAttributes[thisComponentAttribute.nodeName]
+        );
+      }
 
-      const newEvaluatedValue = thisComponent.getAttribute(thisComponentAttribute.nodeName)?.replaceAll(/\{[^\}]*\}/g, (thisVariableAttributeExpressionWithBrackets) => {
-        // console.log(thisVariableAttributeExpressionWithBrackets)
-        const thisVariableExpression = thisVariableAttributeExpressionWithBrackets.replaceAll(/\{|\}/g, "");
-        // console.log(eval(`(() => ${thisVariableExpression})()`))
-        // console.log(thisVariableExpression, eval(thisVariableExpression))
-        return eval(thisVariableExpression);
-      })
+      const newEvaluatedValue = thisComponent
+        .getAttribute(thisComponentAttribute.nodeName)
+        ?.replaceAll(
+          /\{[^\}]*\}/g,
+          (thisVariableAttributeExpressionWithBrackets) => {
+            const thisVariableExpression =
+              thisVariableAttributeExpressionWithBrackets.replaceAll(
+                /\{|\}/g,
+                "",
+              );
+            return eval(thisVariableExpression);
+          },
+        );
 
-      console.log(newEvaluatedValue)
+      thisComponent.previousAttributes[thisComponentAttribute.nodeName] = thisComponentAttribute.nodeValue;
+
       thisComponent.setAttribute(
-        "class",
-        (newEvaluatedValue || "")
-      )
+        thisComponentAttribute.nodeName,
+        newEvaluatedValue || "",
+      );
     });
   }
 });
