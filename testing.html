@@ -14,7 +14,7 @@
 
 <body class="grid gap-8 p-2">
   <laa-parent class="ml-4 grid border border-black rounded p-1">
-    <laa-child class="ml-4 grid border border-black rounded p-1"></laa-child>
+    <laa-child class="ml-4 grid border border-black rounded p-1 {c>3?'bg-green-500':'bg-slate-500'}"></laa-child>
     <laa-child class="ml-4 grid border border-black rounded p-1"></laa-child>
     <laa-child class="ml-4 grid border border-black rounded p-1">
       <laa-parent class="ml-4 grid border border-black rounded p-1">
@@ -30,11 +30,7 @@
 
   ciao
 
-  <!-- <template id="laa-for-child">
-    <slot></slot>
-  </template> -->
-
-  <template id="laa-parent" class="bg-green-500">
+  <template id="laa-parent" class="{a>3?'bg-green-500':'bg-slate-500'}">
     ciao sono la var a: <div data-var="a"></div>,
     <slot></slot>
     <script>
@@ -49,7 +45,7 @@
     </script>
   </template>
 
-  <template id="laa-child" class="bg-red-500">
+  <template id="laa-child" class="bg-orange-500">
     ciao sono la var c: <span data-var="c"></span>,
     <slot></slot>
     <script>

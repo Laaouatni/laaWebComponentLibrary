@@ -23,6 +23,7 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
           const successfullSet = Reflect.set(parent, child, val, receiver);
           if (!successfullSet) return false;
           updateUIwithNewStateValues(this);
+          updateAttributesWithNewStateValues(this);
           return successfullSet;
         },
       });
@@ -43,24 +44,6 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
    *
    * @param {ThisComponent} thisComponent
    */
-  function copyTemplateScriptToComponent(thisComponent) {
-    const templateScripts = thisTemplate.content.querySelectorAll("script");
-    if (templateScripts.length == 0) return;
-
-    const generatedScript = document.createElement("script");
-
-    templateScripts.forEach((thisTemplateScript) => {
-      if (thisTemplateScript.textContent == "") return;
-      generatedScript.textContent += thisTemplateScript.textContent;
-    });
-
-    thisComponent.appendChild(generatedScript);
-  }
-
-  /**
-   *
-   * @param {ThisComponent} thisComponent
-   */
   function copyTemplateToComponentShadowRoot(thisComponent) {
     const templateWithoutScript = thisTemplate.content.cloneNode(true);
 
@@ -75,22 +58,6 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
     );
 
     thisComponent.shadowRoot.appendChild(templateWithoutScript);
-  }
-
-  /**
-   *
-   * @param {ThisComponent} thisComponent
-   */
-  function updateUIwithNewStateValues(thisComponent) {
-    Object.entries(thisComponent.state).forEach(([key, value]) => {
-      const variableHtmlElementsToChange =
-        thisComponent.shadowRoot.querySelectorAll(`[data-var=${key}]`);
-      if (variableHtmlElementsToChange.length == 0) return;
-
-      variableHtmlElementsToChange.forEach((thisVariableElement) => {
-        thisVariableElement.textContent = value;
-      });
-    });
   }
 
   /**
@@ -126,7 +93,9 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
         if (canMergeAttribute) {
           thisComponent.setAttribute(
             thisTemplateAttribute.nodeName,
-            `${thisComponent.getAttribute(thisTemplateAttribute.nodeName)} ${thisTemplateAttribute.nodeValue}`,
+            `${thisComponent.getAttribute(thisTemplateAttribute.nodeName)} ${
+              thisTemplateAttribute.nodeValue
+            }`,
           );
 
           return;
@@ -138,6 +107,48 @@ document.querySelectorAll("template").forEach((thisTemplate) => {
         thisTemplateAttribute.nodeValue,
       );
     });
+  }
+
+  /**
+   *
+   * @param {ThisComponent} thisComponent
+   */
+  function copyTemplateScriptToComponent(thisComponent) {
+    const templateScripts = thisTemplate.content.querySelectorAll("script");
+    if (templateScripts.length == 0) return;
+
+    const generatedScript = document.createElement("script");
+
+    templateScripts.forEach((thisTemplateScript) => {
+      if (thisTemplateScript.textContent == "") return;
+      generatedScript.textContent += thisTemplateScript.textContent;
+    });
+
+    thisComponent.appendChild(generatedScript);
+  }
+
+  /**
+   *
+   * @param {ThisComponent} thisComponent
+   */
+  function updateUIwithNewStateValues(thisComponent) {
+    Object.entries(thisComponent.state).forEach(([key, value]) => {
+      const variableHtmlElementsToChange =
+        thisComponent.shadowRoot.querySelectorAll(`[data-var=${key}]`);
+      if (variableHtmlElementsToChange.length == 0) return;
+
+      variableHtmlElementsToChange.forEach((thisVariableElement) => {
+        thisVariableElement.textContent = value;
+      });
+    });
+  }
+
+  /**
+   * 
+   * @param {ThisComponent} thisComponent 
+   */
+  function updateAttributesWithNewStateValues(thisComponent) {
+    
   }
 });
 
