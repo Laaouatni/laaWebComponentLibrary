@@ -24,44 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
         this._connectedCallback();
         console.log("connectedCallback");
 
-        (() => {
-          const isForLoop = this.nodeName == "laa-for".toUpperCase();
-          if (!isForLoop) return;
-
-          const thisArrayName = this.getAttribute("thisArray") || "";
-          const thisValueName = this.getAttribute("thisValue") || "";
-          const thisIndexName = this.getAttribute("thisIndex") || "";
-
-          const evaluatedArrayValue = eval(thisArrayName);
-          const isArray = Array.isArray(evaluatedArrayValue);
-
-          if (!isArray) throw new Error(`"${thisArrayName}" is not an array`);
-
-          (() => {
-            if (this.previousCloneNode) return;
-            this.previousCloneNode = this.cloneNode(true);
-          })();
-
-          evaluatedArrayValue.forEach((thisArrayItem, thisArrayIndex) => {
-            const slotElement = document.createElement("slot");
-
-            slotElement.setAttribute("thisArray", `${evaluatedArrayValue}`);
-            slotElement.setAttribute("thisValue", `${thisArrayItem}`);
-            slotElement.setAttribute("name", `${thisArrayIndex}`);
-            slotElement.setAttribute("thisIndex", `${thisArrayIndex}`);
-
-            this.shadowRoot.appendChild(slotElement);
-
-            this.previousCloneNode
-              .cloneNode(true)
-              .childNodes.forEach((thisSlotElement) => {
-                if (thisSlotElement instanceof Text) return;
-                thisSlotElement.setAttribute("slot", `${thisArrayIndex}`);
-                this.appendChild(thisSlotElement);
-              });
-          });
-        })();
-
         this.state = new Proxy(this.state, {
           set: (parent, child, val, receiver) => {
             const successfullSet = Reflect.set(parent, child, val, receiver);
@@ -71,6 +33,47 @@ document.addEventListener("DOMContentLoaded", () => {
             return successfullSet;
           },
         });
+
+        // (() => {
+        //   const isForLoop = this.nodeName == "laa-for".toUpperCase();
+        //   if (!isForLoop) return;
+
+        //   const thisArrayName = this.getAttribute("thisArray") || "";
+        //   const thisValueName = this.getAttribute("thisValue") || "";
+        //   const thisIndexName = this.getAttribute("thisIndex") || "";
+
+        //   const evaluatedArrayValue = eval(thisArrayName);
+        //   const isArray = Array.isArray(evaluatedArrayValue);
+
+        //   if (!isArray) throw new Error(`"${thisArrayName}" is not an array`);
+
+        //   (() => {
+        //     if (this.previousCloneNode) return;
+        //     this.previousCloneNode = this.cloneNode(true);
+        //   })();
+
+        //   evaluatedArrayValue.forEach((thisArrayItem, thisArrayIndex) => {
+        //     const slotElement = document.createElement("slot");
+
+        //     slotElement.setAttribute("thisArray", `${evaluatedArrayValue}`);
+        //     slotElement.setAttribute("thisValue", `${thisArrayItem}`);
+        //     slotElement.setAttribute("name", `${thisArrayIndex}`);
+        //     slotElement.setAttribute("thisIndex", `${thisArrayIndex}`);
+
+        //     this.state[thisArrayIndex] = thisArrayItem;
+        //     this.state.a = 999;
+
+        //     this.shadowRoot.appendChild(slotElement);
+
+        //     this.previousCloneNode
+        //       .cloneNode(true)
+        //       .childNodes.forEach((thisSlotElement) => {
+        //         if (thisSlotElement instanceof Text) return;
+        //         thisSlotElement.setAttribute("slot", `${thisArrayIndex}`);
+        //         this.appendChild(thisSlotElement);
+        //       });
+        //   });
+        // })();
 
         copyTemplateToComponentShadowRoot(this);
         copyTemplateAttributesToComponent(this);
@@ -189,8 +192,10 @@ document.addEventListener("DOMContentLoaded", () => {
      * @param {ThisComponent} thisComponent
      */
     function updateUIwithNewStateValues(thisComponent) {
-      const allVariableElementToChange =
-        thisComponent.shadowRoot.querySelectorAll("[data-var]");
+      const allVariableElementToChange = [
+        ...thisComponent.querySelectorAll("[data-var]"),
+        ...thisComponent.shadowRoot.querySelectorAll("[data-var]"),
+      ];
 
       allVariableElementToChange.forEach((thisVariableElement) => {
         const variableName = thisVariableElement.getAttribute("data-var");
