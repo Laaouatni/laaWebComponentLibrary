@@ -17,12 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       previousAttributes = {};
 
-      previousCloneNode;
-
-      constructor() {
-        super();
-      }
-
       _connectedCallback() {}
       connectedCallback() {
         this._connectedCallback();
@@ -33,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!successfullSet) return false;
             updateUIwithNewStateValues(this);
             updateAttributesWithNewStateValues(this);
-            console.log(this.state);
             return successfullSet;
           },
         });
@@ -49,10 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     class LaaFor extends ThisComponent {
-      constructor() {
-        super();
-      }
-
       connectedCallback() {
         super.connectedCallback();
 
@@ -129,7 +118,10 @@ document.addEventListener("DOMContentLoaded", () => {
         thisComponent.childNodes.forEach((thisChildNode) => {
           if (!(thisChildNode instanceof HTMLElement)) return;
           if (thisChildNode instanceof HTMLSlotElement) return;
-          thisChildNode.classList.add("grid");
+          thisChildNode.setAttribute(
+            "class",
+            `grid ${thisChildNode.getAttribute("class") || ""}`,
+          );
         });
       }
     }
@@ -217,6 +209,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const evaluatedValue = eval(variableName);
         const isFunctionVariable = typeof evaluatedValue == "function";
+
+        const valueToReturn = isFunctionVariable
+          ? evaluatedValue()
+          : evaluatedValue;
+
+        if (valueToReturn == undefined) return;
 
         thisVariableElement.textContent = isFunctionVariable
           ? evaluatedValue()
@@ -318,68 +316,5 @@ class laaState {
     }
 
     this.userListeners[variableToListen].push(callback);
-  }
-}
-
-/**
- * @typedef {{parent: HTMLElement, childs?: (ChildNode | HTMLElement | TypeHtmlElementStructure)[] }} TypeHtmlElementStructure
- */
-
-/**
- *
- * @param {HTMLElement} paramHtmlElement
- * @returns {TypeHtmlElementStructure}
- */
-function getHtmlElementArrayStructure(paramHtmlElement) {
-  return recursiveRemoveUnwantedItems(paramHtmlElement);
-
-  /**
-   *
-   * @param {HTMLElement} paramHtmlElement
-   * @returns {TypeHtmlElementStructure}
-   */
-  function recursiveRemoveUnwantedItems(paramHtmlElement) {
-    const parentElementWithUnwantedItems =
-      removeUnwantedItems(paramHtmlElement);
-    if (parentElementWithUnwantedItems.length == 0)
-      return { parent: paramHtmlElement };
-
-    return {
-      parent: paramHtmlElement,
-      childs: parentElementWithUnwantedItems.map((thisElement) => {
-        if (thisElement.childNodes.length == 0) return thisElement;
-        return recursiveRemoveUnwantedItems(thisElement);
-      }),
-    };
-  }
-
-  /**
-   *
-   * @param {HTMLElement} paramHtmlElement
-   * @returns {ChildNode[]}
-   */
-  function removeUnwantedItems(paramHtmlElement) {
-    return [...paramHtmlElement.childNodes].filter((thisChildNode) => {
-      const conditions = {
-        text: {
-          isText: thisChildNode instanceof Text,
-          isEmpty:
-            (thisChildNode.textContent || "")
-              .replaceAll("\n", "")
-              .replaceAll(" ", "") == "",
-        },
-        isComment: thisChildNode instanceof Comment,
-        isScript: thisChildNode instanceof HTMLScriptElement,
-        isTemplate: thisChildNode instanceof HTMLTemplateElement,
-      };
-
-      const isUnwantedItem =
-        (conditions.text.isText && conditions.text.isEmpty) ||
-        conditions.isComment ||
-        conditions.isScript ||
-        conditions.isTemplate;
-
-      return !isUnwantedItem;
-    });
   }
 }

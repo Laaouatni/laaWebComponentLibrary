@@ -17,8 +17,8 @@
   <laa-for thisArray="testArray" thisValue="thisValue" thisIndex="thisIndex" class="grid gap-4">
     <div class="outline rounded-lg">
       <laa-parent class="p-2">
+        <div class="!flex">thisValue: <span data-var="thisComponent.state.thisIndex"></span></div>
       </laa-parent>
-      <div>thisValue: <span data-var="thisComponent.state.thisValue"></span></div>
       <div class="p-2">
         <div>thisValue: <span data-var="thisComponent.state.thisIndex"></span></div>
       </div>
@@ -45,7 +45,6 @@
   </template>
 
   <template id="laa-parent" class="{thisComponent.state.a>3?'bg-green-500':'bg-slate-500'}">
-
     <div>
       a: <span data-var="thisComponent.state.a"></span>
       + b: <span data-var="thisComponent.state.b"></span>
