@@ -54,8 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
         super.connectedCallback();
 
         const thisArrayName = this.getAttribute("thisArray") || "";
-        const thisValueName = this.getAttribute("thisValue") || "";
-        const thisIndexName = this.getAttribute("thisIndex") || "";
+        const thisValueName = this.getAttribute("thisValue") || "thisValue";
+        const thisIndexName = this.getAttribute("thisIndex") || "thisIndex";
 
         const initialLaaForChildNodes = [...this.childNodes];
 
