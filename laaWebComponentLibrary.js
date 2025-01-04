@@ -55,6 +55,15 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isArray) throw new Error(`"${thisArrayName}" is not an array`);
 
         renderArray(this);
+
+        (() => {
+          const isReactiveGlobalState = !!(eval(thisArrayName.split(".")[0]).listenToVariableChange);
+          if (!isReactiveGlobalState) return;
+          const thisGlobalState = eval(thisArrayName.split(".")[0]);
+          thisGlobalState.listenToVariableChange(thisArrayName.split(".")[2], () => {
+            renderArray(this);
+          });
+        })();
         
         /**
          * 
@@ -83,8 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 0);
           });
         }
-
-        
       }
     }
 
