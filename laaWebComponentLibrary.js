@@ -55,7 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isArray) throw new Error(`"${thisArrayName}" is not an array`);
 
         renderArray(this);
-        // renderArray(this);
+        renderArray(this);
+        renderArray(this);
 
         (() => {
           const isReactiveGlobalState = !!eval(thisArrayName.split(".")[0])
@@ -76,11 +77,21 @@ document.addEventListener("DOMContentLoaded", () => {
          * @param {LaaFor} thisLaaForComponent
          */
         function renderArray(thisLaaForComponent) {
-          // thisLaaForComponent
-          //   .querySelectorAll("laa-for-child")
-          //   .forEach((thisChild) => {
-          //     thisChild.remove();
-          //   });
+          console.log(
+            "👀👀👀👀 BEFORE",
+            thisLaaForComponent.querySelectorAll("laa-for-child"),
+          );
+
+          thisLaaForComponent
+            .querySelectorAll("laa-for-child")
+            .forEach((thisChild) => {
+              thisChild.remove();
+            });
+
+          console.log(
+            "👀👀👀👀 AFTER",
+            thisLaaForComponent.querySelectorAll("laa-for-child"),
+          );
 
           setTimeout(() => {
             evaluatedArrayValue.forEach((thisArrayValue, thisIndex) => {
@@ -92,11 +103,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
               console.log([...thisLaaForComponent.childNodes]);
 
-              thisLaaForComponent.childNodes.forEach((thisChildNode) => {
-                const thisChildNodeClone = thisChildNode.cloneNode(true);
-                if (!(thisChildNode instanceof HTMLElement)) return;
-                childComponent.appendChild(thisChildNodeClone);
-              });
+              // thisLaaForComponent.childNodes.forEach((thisChildNode) => {
+              //   const thisChildNodeClone = thisChildNode.cloneNode(true);
+              //   if (!(thisChildNode instanceof HTMLElement)) return;
+              //   childComponent.appendChild(thisChildNodeClone);
+              // });
 
               thisLaaForComponent.appendChild(childComponent);
 
@@ -154,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
         thisComponent.childNodes.forEach((thisChildNode) => {
           if (!(thisChildNode instanceof HTMLElement)) return;
           if (thisChildNode instanceof HTMLSlotElement) return;
-          if(thisChildNode instanceof HTMLScriptElement) return;
+          if (thisChildNode instanceof HTMLScriptElement) return;
           thisChildNode.setAttribute(
             "class",
             `grid ${thisChildNode.getAttribute("class") || ""}`,
