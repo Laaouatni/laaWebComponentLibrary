@@ -1,6 +1,14 @@
 // /* created by Laaouatni - https://github.com/Laaouatni/ */
 
 document.addEventListener("DOMContentLoaded", () => {
+  document.body.innerHTML += `
+    <template id="laa-for">
+      <slot name="childs"></slot>
+    </template>
+    <template id="laa-for-child">
+      <slot></slot>
+    </template>`;
+
   document.querySelectorAll("template").forEach((thisTemplate) => {
     thisTemplate.content.querySelectorAll("script").forEach((thisScript) => {
       thisScript.noModule = true;
