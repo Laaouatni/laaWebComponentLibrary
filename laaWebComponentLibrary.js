@@ -49,15 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const thisValueName = this.getAttribute("thisValue") || "";
         const thisIndexName = this.getAttribute("thisIndex") || "";
 
-        const evaluatedArrayValue = eval(thisArrayName);
-        const isArray = Array.isArray(evaluatedArrayValue);
-
-        if (!isArray) throw new Error(`"${thisArrayName}" is not an array`);
-
         renderArray(this);
-
-        // renderArray(this);
-        // renderArray(this);
 
         (() => {
           const isReactiveGlobalState = !!eval(thisArrayName.split(".")[0])
@@ -68,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
           thisGlobalState.listenToVariableChange(
             thisArrayName.split(".")[2],
             (value) => {
-              console.log("changed", value);
+              // console.log("changed", value);
               renderArray(this);
             },
           );
@@ -79,42 +71,47 @@ document.addEventListener("DOMContentLoaded", () => {
          * @param {LaaFor} thisLaaForComponent
          */
         function renderArray(thisLaaForComponent) {
-          resetLaaForComponent();
-          evaluatedArrayValue.forEach((thisArrayValue, thisIndex) => {
-            /**
-             * @type {LaaForChild}
-             */
-            const childComponent = document.createElement("laa-for-child");
-            childComponent.setAttribute("slot", "childs");
+          const evaluatedArrayValue = eval(thisArrayName);
+          const isArray = Array.isArray(evaluatedArrayValue);
+          if (!isArray) throw new Error(`"${thisArrayName}" is not an array`);
 
-            // console.log([...thisLaaForComponent.childNodes]);
+          console.log(eval);
+          // resetLaaForComponent();
+          // evaluatedArrayValue.forEach((thisArrayValue, thisIndex) => {
+          //   /**
+          //    * @type {LaaForChild}
+          //    */
+          //   const childComponent = document.createElement("laa-for-child");
+          //   childComponent.setAttribute("slot", "childs");
 
-            thisLaaForComponent.childNodes.forEach((thisChildNode) => {
-              const thisChildNodeClone = thisChildNode.cloneNode(true);
-              if (!(thisChildNode instanceof HTMLElement)) return;
-              childComponent.appendChild(thisChildNodeClone);
-            });
+          //   // console.log([...thisLaaForComponent.childNodes]);
 
-            thisLaaForComponent.appendChild(childComponent);
+          //   thisLaaForComponent.childNodes.forEach((thisChildNode) => {
+          //     const thisChildNodeClone = thisChildNode.cloneNode(true);
+          //     if (!(thisChildNode instanceof HTMLElement)) return;
+          //     childComponent.appendChild(thisChildNodeClone);
+          //   });
 
-            setTimeout(() => {
-              childComponent.state[thisValueName] = thisArrayValue;
-              childComponent.state[thisIndexName] = thisIndex;
-              childComponent.state["thisArray"] = evaluatedArrayValue;
-            }, 0);
-          });
+          //   thisLaaForComponent.appendChild(childComponent);
 
-          function resetLaaForComponent() {
-            thisLaaForComponent.childNodes.forEach((thisChildNode) => {
-              const isLaaForChild =
-                thisChildNode.nodeName == "laa-for-child".toUpperCase();
-              if (!isLaaForChild) return;
-              thisChildNode.removeAttribute("slot");
-              setTimeout(() => {
-                thisChildNode.remove();
-              });
-            });
-          }
+          //   setTimeout(() => {
+          //     childComponent.state[thisValueName] = thisArrayValue;
+          //     childComponent.state[thisIndexName] = thisIndex;
+          //     childComponent.state["thisArray"] = evaluatedArrayValue;
+          //   }, 0);
+          // });
+
+          // function resetLaaForComponent() {
+          //   thisLaaForComponent.childNodes.forEach((thisChildNode) => {
+          //     const isLaaForChild =
+          //       thisChildNode.nodeName == "laa-for-child".toUpperCase();
+          //     if (!isLaaForChild) return;
+          //     thisChildNode.removeAttribute("slot");
+          //     setTimeout(() => {
+          //       thisChildNode.remove();
+          //     });
+          //   });
+          // }
         }
       }
     }
