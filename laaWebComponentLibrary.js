@@ -54,24 +54,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!isArray) throw new Error(`"${thisArrayName}" is not an array`);
 
-        evaluatedArrayValue.forEach((thisArrayValue, thisIndex) => {
-          /**
-           * @type {LaaForChild}
-           */
-          const childComponent = document.createElement("laa-for-child");
-          childComponent.setAttribute("slot", "childs");
-          this.childNodes.forEach((thisChildNode) => {
-            const thisChildNodeClone = thisChildNode.cloneNode(true);
-            if (!(thisChildNode instanceof HTMLElement)) return;
-            childComponent.appendChild(thisChildNodeClone);
+        renderArray(this);
+        
+        /**
+         * 
+         * @param {LaaFor} thisLaaForComponent 
+         */
+        function renderArray(thisLaaForComponent) {
+          evaluatedArrayValue.forEach((thisArrayValue, thisIndex) => {
+            /**
+             * @type {LaaForChild}
+             */
+            const childComponent = document.createElement("laa-for-child");
+            childComponent.setAttribute("slot", "childs");
+  
+            thisLaaForComponent.childNodes.forEach((thisChildNode) => {
+              const thisChildNodeClone = thisChildNode.cloneNode(true);
+              if (!(thisChildNode instanceof HTMLElement)) return;
+              childComponent.appendChild(thisChildNodeClone);
+            });
+  
+            thisLaaForComponent.appendChild(childComponent);
+            
+            setTimeout(() => {
+              childComponent.state[thisValueName] = thisArrayValue;
+              childComponent.state[thisIndexName] = thisIndex;
+              childComponent.state["thisArray"] = evaluatedArrayValue;
+            }, 0);
           });
-          this.appendChild(childComponent);
-          setTimeout(() => {
-            childComponent.state[thisValueName] = thisArrayValue;
-            childComponent.state[thisIndexName] = thisIndex;
-            childComponent.state["thisArray"] = evaluatedArrayValue;
-          }, 0);
-        });
+        }
+
+        
       }
     }
 
