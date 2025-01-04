@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
           thisGlobalState.listenToVariableChange(
             thisArrayName.split(".")[2],
             (value) => {
-              // console.log("changed", value);
+              console.log("changed", value);
               renderArray(this);
             },
           );
@@ -74,8 +74,8 @@ document.addEventListener("DOMContentLoaded", () => {
           const evaluatedArrayValue = eval(thisArrayName);
           const isArray = Array.isArray(evaluatedArrayValue);
           if (!isArray) throw new Error(`"${thisArrayName}" is not an array`);
-
-          console.log(eval);
+          
+          console.log(evaluatedArrayValue);
           // resetLaaForComponent();
           // evaluatedArrayValue.forEach((thisArrayValue, thisIndex) => {
           //   /**
