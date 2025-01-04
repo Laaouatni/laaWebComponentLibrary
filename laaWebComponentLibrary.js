@@ -76,11 +76,11 @@ document.addEventListener("DOMContentLoaded", () => {
          * @param {LaaFor} thisLaaForComponent
          */
         function renderArray(thisLaaForComponent) {
-          thisLaaForComponent
-            .querySelectorAll("laa-for-child")
-            .forEach((thisChild) => {
-              thisChild.remove();
-            });
+          // thisLaaForComponent
+          //   .querySelectorAll("laa-for-child")
+          //   .forEach((thisChild) => {
+          //     thisChild.remove();
+          //   });
 
           setTimeout(() => {
             evaluatedArrayValue.forEach((thisArrayValue, thisIndex) => {
@@ -154,6 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
         thisComponent.childNodes.forEach((thisChildNode) => {
           if (!(thisChildNode instanceof HTMLElement)) return;
           if (thisChildNode instanceof HTMLSlotElement) return;
+          if(thisChildNode instanceof HTMLScriptElement) return;
           thisChildNode.setAttribute(
             "class",
             `grid ${thisChildNode.getAttribute("class") || ""}`,
