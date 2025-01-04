@@ -9,18 +9,21 @@
   <script src="./laaWebComponentLibrary.js"></script>
   <script>
     let testArray = [1, 25, 3, 99, 5, 5];
-    const globalState = new laaState({ d: 99 });
+    const globalState = new laaState({ d: 99, testArray: [1,2,5,78,99,18,66] });
+    document.addEventListener("click", () => {
+      globalState.state.testArray = [...globalState.state.testArray, Math.floor(Math.random() * 100)];
+    })
   </script>
 </head>
 
 <body class="grid gap-8 p-2">
-  <laa-for thisArray="testArray" thisValue="thisValue" thisIndex="thisIndex" class="grid gap-4">
+  <laa-for thisArray="globalState.state.testArray" thisValue="thisValue" thisIndex="thisIndex" class="grid gap-4">
     <div class="outline rounded-lg">
       <laa-parent class="p-2">
         <div class="!flex">thisValue: <span data-var="thisComponent.state.thisIndex"></span></div>
       </laa-parent>
       <div class="p-2">
-        <div>thisValue: <span data-var="thisComponent.state.thisIndex"></span></div>
+        <div>thisValue: <span data-var="thisComponent.state.thisValue"></span></div>
       </div>
     </div>
     <laa-a class="p-2"></laa-a>
