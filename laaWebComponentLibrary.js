@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const thisValueName = this.getAttribute("thisValue") || "";
         const thisIndexName = this.getAttribute("thisIndex") || "";
 
-        const initialLaaForChildNodes = this.childNodes;
+        const initialLaaForChildNodes = [...this.childNodes];
 
         renderArray(this);
 
@@ -77,9 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const isArray = Array.isArray(evaluatedArrayValue);
           if (!isArray) throw new Error(`"${thisArrayName}" is not an array`);
 
-          initialLaaForChildNodes.forEach((thisChildNode) => {
-            thisChildNode.remove();
-          });
+          thisLaaForComponent.innerHTML = "";
 
           console.log(initialLaaForChildNodes);
 
