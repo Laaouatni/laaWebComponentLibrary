@@ -42,8 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     class LaaFor extends ThisComponent {
-      isUpdating = false;
-
       connectedCallback() {
         super.connectedCallback();
 
@@ -57,6 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isArray) throw new Error(`"${thisArrayName}" is not an array`);
 
         renderArray(this);
+
         // renderArray(this);
         // renderArray(this);
 
@@ -70,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
             thisArrayName.split(".")[2],
             (value) => {
               console.log("changed", value);
+              renderArray(this);
             },
           );
         })();
@@ -79,18 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
          * @param {LaaFor} thisLaaForComponent
          */
         function renderArray(thisLaaForComponent) {
-          if (thisLaaForComponent.isUpdating) return;
-          thisLaaForComponent.isUpdating = true;
-          thisLaaForComponent.childNodes.forEach((thisChildNode) => {
-            const isLaaForChild =
-              thisChildNode.nodeName == "laa-for-child".toUpperCase();
-            if (!isLaaForChild) return;
-            thisChildNode.remove();
-          });
-
-          console.log([...thisLaaForComponent.childNodes]);
-
-          // setTimeout(() => {
+          resetLaaForComponent();
           evaluatedArrayValue.forEach((thisArrayValue, thisIndex) => {
             /**
              * @type {LaaForChild}
@@ -114,8 +103,18 @@ document.addEventListener("DOMContentLoaded", () => {
               childComponent.state["thisArray"] = evaluatedArrayValue;
             }, 0);
           });
-          // }, 0);
-          thisLaaForComponent.isUpdating = false;
+
+          function resetLaaForComponent() {
+            thisLaaForComponent.childNodes.forEach((thisChildNode) => {
+              const isLaaForChild =
+                thisChildNode.nodeName == "laa-for-child".toUpperCase();
+              if (!isLaaForChild) return;
+              thisChildNode.removeAttribute("slot");
+              setTimeout(() => {
+                thisChildNode.remove();
+              });
+            });
+          }
         }
       }
     }
