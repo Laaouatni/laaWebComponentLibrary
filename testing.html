@@ -6,58 +6,76 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script defer src="./laaWebComponentLibrary.js"></script>
+  <script src="./laaWebComponentLibrary.js"></script>
   <script>
-    let arrayTest = [4];
+    let testArray = [1, 25, 3, 99, 5, 5];
+    const globalState = new laaState({ d: 99, testArray: [1,2,5,78,99,18,66] });
+    document.addEventListener("click", () => {
+      globalState.state.testArray = [...globalState.state.testArray, Math.floor(Math.random() * 100)];
+    })
   </script>
 </head>
 
 <body class="grid gap-8 p-2">
-  <laa-parent class="ml-4 grid border border-black rounded p-1">
-    <laa-child class="ml-4 grid border {thisComponent.state.c>7?'border-purple-600':'border-yellow-400'} border-black rounded p-1 {thisComponent.state.c>3?'bg-green-500':'bg-slate-500'}"></laa-child>
-    <laa-child class="ml-4 grid border {thisComponent.state.tw} border-black rounded p-1"></laa-child>
-    <laa-child class="ml-4 grid border border-black rounded p-1">
-      <laa-parent class="ml-4 grid border border-black rounded p-1">
-        <laa-child class="ml-4 grid border border-black rounded p-1"></laa-child>
-        <laa-child class="ml-4 grid border border-black rounded p-1"></laa-child>
-        <laa-child class="ml-4 grid border border-black rounded p-1"></laa-child>
-        <laa-child class="ml-4 grid border border-black rounded p-1">
-          <laa-child class="ml-4 grid border border-black rounded p-1"></laa-child>
-        </laa-child>
+  <laa-for thisArray="globalState.state.testArray" thisValue="thisValue" thisIndex="thisIndex" class="grid gap-4">
+    <div class="outline rounded-lg">
+      <laa-parent class="p-2">
+        <div class="!flex">thisValue: <span data-var="thisComponent.state.thisIndex"></span></div>
       </laa-parent>
-    </laa-child>
-  </laa-parent>
+      <div class="p-2">
+        <div>thisValue: <span data-var="thisComponent.state.thisValue"></span></div>
+      </div>
+    </div>
+    <laa-a class="p-2"></laa-a>
+  </laa-for>
 
-  ciao
+  <template id="laa-for"><slot name="childs"></slot></template>
+  <template id="laa-for-child"><slot></slot></template>
 
-  <template id="laa-parent" class="{thisComponent.state.a>3?'bg-green-500':'bg-slate-500'}">
-    ciao sono la var a: <div data-var="a"></div>,
+  <template id="laa-a">
+    span: <span data-var="thisComponent.state.a"></span>
     <slot></slot>
     <script>
-      (() => { 
+      (() => {
         let thisComponent = document.currentScript.parentElement;
-        thisComponent.state['a'] = 1;
+        thisComponent.state['a'] = 0;
         thisComponent.addEventListener('click', (e) => {
           e.stopPropagation();
-          thisComponent.state['a'] = thisComponent.state['a'] + 1;
+          thisComponent.state['a']++
         });
-      })();
+      })()
     </script>
   </template>
 
-  <template id="laa-child" class="bg-orange-500">
-    ciao sono la var c: <span data-var="c"></span>,
+  <template id="laa-parent" class="{thisComponent.state.a>3?'bg-green-500':'bg-slate-500'}">
+    <div>
+      a: <span data-var="thisComponent.state.a"></span>
+      + b: <span data-var="thisComponent.state.b"></span>
+      = c: <span data-var="thisComponent.state.c"></span>
+      ....
+      d: <span data-var="thisComponent.state.d"></span>
+    </div>
     <slot></slot>
     <script>
-      (() => { 
-        let thisComponent = document.currentScript.parentElement;
-        thisComponent.state['c'] = 1;
-        thisComponent.state["tw"] = "p-8";
-        thisComponent.addEventListener('click', (e) => {
-          e.stopPropagation();
-          thisComponent.state['c'] = thisComponent.state['c'] + 1;
-        });
-      })();
+        (() => {
+          let thisComponent = document.currentScript.parentElement;
+
+          thisComponent.state['a'] = 0;
+          thisComponent.state['b'] = 0;
+
+          thisComponent.state['d'] = globalState.state.d;
+          globalState.listenToVariableChange('d', (value) => {
+            thisComponent.state['d'] = value;
+          });
+
+          thisComponent.state['c'] = () => thisComponent.state['a'] + thisComponent.state['b'] + globalState.state.d;
+
+          thisComponent.addEventListener('click', (e) => {
+            e.stopPropagation();
+            thisComponent.state['a']++
+            globalState.state.d++;
+          });
+        })();
     </script>
   </template>
 </body>
